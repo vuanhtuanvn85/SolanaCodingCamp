@@ -11,6 +11,11 @@ pub mod solana_coding_camp {
         sum_account.sum = sum_init;
         Ok(())
     }
+
+    pub fn update_sum(ctx: Context<UpdateSum>, number: u64) -> Result<()> {
+        ctx.accounts.sum_account.sum += number;
+        Ok(())
+    }
 }
 
 // Khai báo cấu trúc dữ liệu
@@ -32,4 +37,10 @@ pub struct InitializeSum<'info> {
 
     // địa chỉ chương trình giúp thuê tài khoản
     pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct UpdateSum<'info> {
+    #[account(mut)]
+    pub sum_account: Account<'info, SumAccount>,
 }

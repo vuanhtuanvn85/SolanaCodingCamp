@@ -27,4 +27,16 @@ describe("my_program", () => {
     console.log("sumAccountData", sumAccountData);
   });
 
+  it("Update sum", async () => {
+    // Add your test here.
+    await program.rpc.updateSum(new BN(3), {
+      accounts: {
+        sumAccount: sumAccount.publicKey,
+      }
+    });
+
+    let sumAccountData = await program.account.sumAccount.fetch(sumAccount.publicKey);
+    console.log("sumAccountData", sumAccountData);
+  });
+
 });
