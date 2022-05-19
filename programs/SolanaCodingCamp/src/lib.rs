@@ -16,12 +16,34 @@ pub mod solana_coding_camp {
         ctx.accounts.sum_account.sum += number;
         Ok(())
     }
+
+    pub fn initialize_vote(ctx: Context<InitializeVote>, vote_account_bump: u8) -> Result<()> {
+        ctx.accounts.vote_account.bump = vote_account_bump;
+        Ok(())
+    }
+
+    pub fn vote_pizza(ctx: Context<Vote>) -> Result<()> {
+        ctx.accounts.vote_account.pizza += 1;
+        Ok(())
+    }
+
+    pub fn vote_hamburger(ctx: Context<Vote>) -> Result<()> {
+        ctx.accounts.vote_account.hamburger += 1;
+        Ok(())
+    }
 }
 
 // Khai báo cấu trúc dữ liệu
 #[account]
 pub struct SumAccount {
     pub sum: u64,
+}
+
+#[account]
+pub struct VottingState {
+    pub pizza: u64,
+    pub hamburger: u64,
+    pub bump: u8,
 }
 
 // Khai báo các tài khoản sẽ tương tác
@@ -43,4 +65,24 @@ pub struct InitializeSum<'info> {
 pub struct UpdateSum<'info> {
     #[account(mut)]
     pub sum_account: Account<'info, SumAccount>,
+}
+
+#[derive(Accounts)]
+pub struct InitializeVote<'info> {
+    // địa chỉ thuê
+    #[account(init, seeds = [b"seed".as_ref()], bump, payer = user, space = 8 + 16 + 1 )]
+    pub vote_account: Account<'info, VottingState>,
+
+    // người trả phí giao dịch
+    #[account(mut)]
+    pub user: Signer<'info>,
+
+    // địa chỉ chương trình giúp thuê tài khoản
+    pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct Vote<'info> {
+    #[account(mut, seeds = [b"seed".as_ref()], bump = vote_account.bump)]
+    vote_account: Account<'info, VottingState>,
 }
