@@ -1,17 +1,30 @@
-import * as anchor from "@project-serum/anchor";
-import { Program } from "@project-serum/anchor";
-import { BN } from "bn.js";
+import { Program, setProvider, web3, AnchorProvider, workspace, BN } from "@project-serum/anchor";
+import { SystemProgram } from "@solana/web3.js";
 import { SolanaCodingCamp } from "../target/types/solana_coding_camp";
 
-describe("SolanaCodingCamp", () => {
+describe("my_program", () => {
   // Configure the client to use the local cluster.
-  anchor.setProvider(anchor.AnchorProvider.env());
+  const provider = AnchorProvider.env();
+  setProvider(provider);
 
-  const program = anchor.workspace.SolanaCodingCamp as Program<SolanaCodingCamp>;
+  const program = workspace.SolanaCodingCamp as Program<SolanaCodingCamp>;
+
+  // Tạo địa chỉ thuê
+  const sumAccount = web3.Keypair.generate();
 
   it("Is initialized!", async () => {
     // Add your test here.
-    const tx = await program.methods.initializeSum(new BN(1)).rpc();
-    console.log("Your transaction signature", tx);
+    await program.rpc.initializeSum(new BN(5), {
+      accounts: {
+        sumAccount: sumAccount.publicKey,
+        user: provider.wallet.publicKey,
+        systemProgram: SystemProgram.programId,
+      },
+      signers: [sumAccount],
+    });
+
+    let sumAccountData = await program.account.sumAccount.fetch(sumAccount.publicKey);
+    console.log("sumAccountData", sumAccountData);
   });
+
 });
