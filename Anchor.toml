@@ -1,7 +1,7 @@
 [features]
 seeds = false
 [programs.localnet]
-solana_coding_camp = "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"
+solana_coding_camp = "4Q71d52Byvx9TcyhDNJXH98HPpvdiAeToyDn1tiqyhcP"
 
 [registry]
 url = "https://anchor.projectserum.com"
