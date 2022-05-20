@@ -1,4 +1,5 @@
 import { Col, Row } from "antd";
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 const WalletInfo = ({
   address,
@@ -20,7 +21,9 @@ const WalletInfo = ({
       <Col span={24}>
         <Row gutter={[12, 12]}>
           <Col>Balance:</Col>
-          <Col>{balance}</Col>
+          <Col>{typeof balance === "number"
+            ? `${(balance / LAMPORTS_PER_SOL).toLocaleString()} SOL`
+            : "--"}</Col>
         </Row>
       </Col>
     </Row>
