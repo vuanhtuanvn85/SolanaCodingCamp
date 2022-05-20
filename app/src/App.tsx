@@ -11,10 +11,14 @@ import Counter from "./components/counter";
 import WalletInfo from "./components/walletInfo";
 import { AppDispatch } from "./store";
 import { setWalletInfo, WalletState } from "./store/wallet.reducer";
+import { clusterApiUrl, Connection, Keypair, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { AccountLayout, TOKEN_PROGRAM_ID, createMint, getOrCreateAssociatedTokenAccount, mintTo, transfer } from '@solana/spl-token';
 
 function App() {
   const [balance, setBalance] = useState<number>(0);
   const [walletAddress, setWalletAdress] = useState<string>("");
+
+
 
   // Goki hooks
   const wallet = useConnectedWallet();
@@ -32,6 +36,34 @@ function App() {
       walletInfo.balance = await providerMut.connection.getBalance(
         wallet.publicKey
       );
+
+      // Using web3.js
+      const connection = new Connection(clusterApiUrl('devnet'), 'confirmed'); const airdropSignature = await connection.requestAirdrop(
+        wallet.publicKey,
+        LAMPORTS_PER_SOL,
+      );
+
+      // // airdrop
+      // let myTxn = await connection.confirmTransaction(airdropSignature);
+
+      // get token balance
+      const tokenAccounts = await connection.getTokenAccountsByOwner(
+        wallet.publicKey,
+        {
+          programId: TOKEN_PROGRAM_ID,
+        }
+      );
+      let tokenBalance = 0;
+      tokenAccounts.value.forEach((e) => {
+        const accountInfo = AccountLayout.decode(e.account.data);
+        if (accountInfo.mint.toString() === '5ftoDyQvRRL9wFXmaHVN4vYqfdjWue8woQSQ1T8RpinA') {
+          tokenBalance = Number(accountInfo.amount);
+          console.log(tokenBalance.toLocaleString());
+        }
+      })
+
+
+
     }
     dispatch(setWalletInfo(walletInfo));
     setBalance(walletInfo.balance);
