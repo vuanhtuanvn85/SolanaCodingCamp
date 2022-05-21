@@ -31,14 +31,30 @@ pub mod solana_coding_camp {
         Ok(())
     }
 
-    pub fn vote_pizza(ctx: Context<Vote>) -> Result<()> {
+    pub fn vote_pizza(ctx: Context<TestVote>) -> Result<()> {
         ctx.accounts.vote_account.pizza += 1;
         Ok(())
     }
 
-    pub fn vote_hamburger(ctx: Context<Vote>) -> Result<()> {
+    pub fn vote_hamburger(ctx: Context<TestVote>) -> Result<()> {
         ctx.accounts.vote_account.hamburger += 1;
         Ok(())
+    }
+
+    pub fn initialize_candidate(
+        ctx: Context<InitializeCandidate>,
+        start_date: i64,
+        end_date: i64,
+    ) -> Result<()> {
+        initialize_candidate::exec(ctx, start_date, end_date)
+    }
+
+    pub fn vote(ctx: Context<Vote>, amount: u64) -> Result<()> {
+        vote::exec(ctx, amount)
+    }
+
+    pub fn close(ctx: Context<Close>) -> Result<()> {
+        close::exec(ctx)
     }
 }
 
@@ -91,7 +107,7 @@ pub struct InitializeVote<'info> {
 }
 
 #[derive(Accounts)]
-pub struct Vote<'info> {
+pub struct TestVote<'info> {
     #[account(mut, seeds = [b"seed".as_ref()], bump = vote_account.bump)]
     vote_account: Account<'info, VottingState>,
 }
