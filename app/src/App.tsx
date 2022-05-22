@@ -54,19 +54,25 @@ function App() {
       console.log(mintInfo.supply);
 
       // get token balance
+      // const tokenAccounts = await connection.getTokenAccountsByOwner(
+      //   wallet.publicKey,
+      //   {
+      //     programId: TOKEN_PROGRAM_ID,
+      //   }
+      // );
       const tokenAccounts = await connection.getTokenAccountsByOwner(
         wallet.publicKey,
         {
-          programId: TOKEN_PROGRAM_ID,
+          mint: new PublicKey('5ftoDyQvRRL9wFXmaHVN4vYqfdjWue8woQSQ1T8RpinA'),
         }
       );
       let tokenBalance = 0;
       tokenAccounts.value.forEach((e) => {
         const accountInfo = AccountLayout.decode(e.account.data);
-        if (accountInfo.mint.toString() === '5ftoDyQvRRL9wFXmaHVN4vYqfdjWue8woQSQ1T8RpinA') {
-          tokenBalance = Number(accountInfo.amount);
-          console.log(tokenBalance.toLocaleString());
-        }
+        // if (accountInfo.mint.toString() === '5ftoDyQvRRL9wFXmaHVN4vYqfdjWue8woQSQ1T8RpinA') {
+        tokenBalance = Number(accountInfo.amount);
+        console.log(tokenBalance.toLocaleString());
+        // }
       })
 
 
