@@ -77,6 +77,14 @@ function App() {
       })
 
 
+      // get token balance (method 2)
+      let tokenAccount = await utils.token.associatedAddress({
+        mint: new PublicKey('5ftoDyQvRRL9wFXmaHVN4vYqfdjWue8woQSQ1T8RpinA'),
+        owner: wallet.publicKey,
+      })
+      const balance = await connection.getTokenAccountBalance(tokenAccount);
+      console.log("token balance (method 2): ", balance.value.uiAmount);
+
     }
     dispatch(setWalletInfo(walletInfo));
     setBalance(walletInfo.balance);
