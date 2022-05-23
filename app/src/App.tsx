@@ -13,6 +13,7 @@ import { AppDispatch } from "./store";
 import { setWalletInfo, WalletState } from "./store/wallet.reducer";
 import { clusterApiUrl, Connection, Keypair, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { AccountLayout, TOKEN_PROGRAM_ID, getMint, createMint, getOrCreateAssociatedTokenAccount, mintTo, transfer } from '@solana/spl-token';
+import { web3, utils, BN } from '@project-serum/anchor'
 
 function App() {
   const [balance, setBalance] = useState<number>(0);
@@ -74,7 +75,6 @@ function App() {
         console.log(tokenBalance.toLocaleString());
         // }
       })
-
 
 
     }

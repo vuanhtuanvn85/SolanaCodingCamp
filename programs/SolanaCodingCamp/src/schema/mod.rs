@@ -3,3 +3,9 @@ pub use candidate::*;
 
 pub mod ballot;
 pub use ballot::*;
+
+pub mod sum;
+pub use sum::*;
+
+pub mod vote_food;
+pub use vote_food::*;
