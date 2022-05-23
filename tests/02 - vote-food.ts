@@ -21,41 +21,41 @@ describe("solana_coding_camp", async () => {
   );
   console.log("voteAccount", voteAccount);
   console.log("voteAccountBump", voteAccountBump);
-  console.log("program.programId", program.programId);
+  console.log("program.programId", program.programId.toBase58());
 
 
   it("Vote initialized!", async () => {
-    await program.rpc.initializeVote(voteAccountBump, {
+    await program.rpc.initializeVoteFood(voteAccountBump, {
       accounts: {
-        voteAccount: voteAccount,
+        voteFoodAccount: voteAccount,
         user: provider.wallet.publicKey,
         systemProgram: SystemProgram.programId,
       }
     });
 
-    let voteAccountData = await program.account.vottingState.fetch(voteAccount);
+    let voteAccountData = await program.account.voteFood.fetch(voteAccount);
     console.log("sumAccountData", voteAccountData);
   });
 
   it("Vote pizza!", async () => {
     await program.rpc.votePizza({
       accounts: {
-        voteAccount: voteAccount,
+        voteFoodAccount: voteAccount,
       }
     });
 
-    let voteAccountData = await program.account.vottingState.fetch(voteAccount);
+    let voteAccountData = await program.account.voteFood.fetch(voteAccount);
     console.log("sumAccountData", voteAccountData);
   });
 
   it("Vote hamburger!", async () => {
     await program.rpc.voteHamburger({
       accounts: {
-        voteAccount: voteAccount,
+        voteFoodAccount: voteAccount,
       }
     });
 
-    let voteAccountData = await program.account.vottingState.fetch(voteAccount);
+    let voteAccountData = await program.account.voteFood.fetch(voteAccount);
     console.log("sumAccountData", voteAccountData);
   });
 

@@ -24,7 +24,7 @@ pub mod solana_coding_camp {
         update_sum::exec(ctx, number)
     }
 
-    pub fn initialize_vote(
+    pub fn initialize_vote_food(
         ctx: Context<InitializeVoteFood>,
         vote_food_account_bump: u8,
     ) -> Result<()> {

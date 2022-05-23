@@ -9,7 +9,7 @@ import {
     setProvider,
 } from '@project-serum/anchor'
 import { SolanaCodingCamp } from '../target/types/solana_coding_camp'
-import { initializeAccount, initializeMint } from './pretest'
+import { initializeAccount, initializeMint } from './03 - pretest'
 
 describe('SolanaCodingCamp', () => {
     // Configure the client to use the local cluster.
@@ -76,7 +76,7 @@ describe('SolanaCodingCamp', () => {
 
     it('initialize candidate', async () => {
         const now = Math.floor(new Date().getTime() / 1000)
-        const startTime = new BN(now)
+        const startTime = new BN(now - 1)
         const endTime = new BN(now + 5)
 
         await program.rpc.initializeCandidate(startTime, endTime, {

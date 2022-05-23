@@ -3,7 +3,7 @@ use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
 pub struct InitializeVoteFood<'info> {
-    #[account(init, seeds = [b"seed".as_ref()], bump, payer = user, space = Sum::SIZE)]
+    #[account(init, seeds = [b"seed".as_ref()], bump, payer = user, space = VoteFood::SIZE)]
     pub vote_food_account: Account<'info, VoteFood>,
 
     #[account(mut)]
