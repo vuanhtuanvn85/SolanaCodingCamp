@@ -12,6 +12,7 @@ pub struct InitializePuppet<'info> {
     pub system_program: Program<'info, System>,
 }
 
-pub fn initialize_puppet(_ctx: Context<InitializePuppet>) -> Result<()> {
+pub fn initialize_puppet(_ctx: Context<InitializePuppet>, authority: Pubkey) -> Result<()> {
+    _ctx.accounts.puppet.authority = authority;
     Ok(())
 }

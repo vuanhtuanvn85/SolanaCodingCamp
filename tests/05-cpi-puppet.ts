@@ -13,10 +13,11 @@ describe('puppet', () => {
     const puppetMasterProgram = anchor.workspace.PuppetMaster as Program<PuppetMaster>;
 
     const puppetKeypair = Keypair.generate();
+    const authorityKeypair = Keypair.generate();
 
     it('Does CPI!', async () => {
         await puppetProgram.methods
-            .initializePuppet()
+            .initializePuppet(authorityKeypair.publicKey)
             .accounts({
                 puppet: puppetKeypair.publicKey,
                 user: provider.wallet.publicKey,
@@ -24,12 +25,15 @@ describe('puppet', () => {
             .signers([puppetKeypair])
             .rpc();
 
+
         await puppetMasterProgram.methods
             .pullStrings(new anchor.BN(42))
             .accounts({
                 puppetProgram: puppetProgram.programId,
-                puppet: puppetKeypair.publicKey
+                puppet: puppetKeypair.publicKey,
+                authority: authorityKeypair.publicKey
             })
+            .signers([authorityKeypair])
             .rpc();
 
         expect((await puppetProgram.account.puppetData

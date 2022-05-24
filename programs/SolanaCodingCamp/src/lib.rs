@@ -63,8 +63,8 @@ pub mod solana_coding_camp {
         play_tic_tac_toe_game::play(ctx, tile)
     }
 
-    pub fn initialize_puppet(ctx: Context<InitializePuppet>) -> Result<()> {
-        initialize_puppet::initialize_puppet(ctx)
+    pub fn initialize_puppet(ctx: Context<InitializePuppet>, authority: Pubkey) -> Result<()> {
+        initialize_puppet::initialize_puppet(ctx, authority)
     }
 
     pub fn update_puppet_data(ctx: Context<UpdatePuppet>, data: u64) -> Result<()> {

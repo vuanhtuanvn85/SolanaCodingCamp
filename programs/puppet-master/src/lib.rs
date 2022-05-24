@@ -14,6 +14,7 @@ mod puppet_master {
         let cpi_program = ctx.accounts.puppet_program.to_account_info();
         let cpi_accounts = UpdatePuppet {
             puppet: ctx.accounts.puppet.to_account_info(),
+            authority: ctx.accounts.authority.to_account_info(),
         };
         let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
         solana_coding_camp::cpi::update_puppet_data(cpi_ctx, data)
@@ -30,6 +31,10 @@ pub struct PullStrings<'info> {
     #[account(mut)]
     pub puppet: Account<'info, PuppetData>,
     pub puppet_program: Program<'info, SolanaCodingCamp>,
+    // Even though the puppet program already checks that authority is a signer
+    // using the Signer type here is still required because the anchor ts client
+    // can not infer signers from programs called via CPIs
+    pub authority: Signer<'info>,
 }
 
 // // 02-b
@@ -38,6 +43,7 @@ pub struct PullStrings<'info> {
 //         let cpi_program = self.puppet_program.to_account_info();
 //         let cpi_accounts = UpdatePuppet {
 //             puppet: self.puppet.to_account_info(),
+//             authority: self.authority.to_account_info(),
 //         };
 //         CpiContext::new(cpi_program, cpi_accounts)
 //     }

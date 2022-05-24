@@ -3,8 +3,9 @@ use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
 pub struct UpdatePuppet<'info> {
-    #[account(mut)]
+    #[account(mut, has_one = authority)]
     pub puppet: Account<'info, PuppetData>,
+    pub authority: Signer<'info>,
 }
 
 pub fn update_puppet_data(ctx: Context<UpdatePuppet>, data: u64) -> Result<()> {
