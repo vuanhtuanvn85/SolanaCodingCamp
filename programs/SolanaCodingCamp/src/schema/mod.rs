@@ -9,3 +9,6 @@ pub use sum::*;
 
 pub mod vote_food;
 pub use vote_food::*;
+
+pub mod tic_tac_toe_game;
+pub use tic_tac_toe_game::*;

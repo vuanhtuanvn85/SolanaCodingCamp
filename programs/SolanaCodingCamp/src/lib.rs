@@ -54,6 +54,14 @@ pub mod solana_coding_camp {
     pub fn close(ctx: Context<Close>) -> Result<()> {
         close::exec(ctx)
     }
+
+    pub fn setup_game(ctx: Context<SetupGame>, player_two: Pubkey) -> Result<()> {
+        setup_tic_tac_toe_game::setup_game(ctx, player_two)
+    }
+
+    pub fn play(ctx: Context<Play>, tile: Tile) -> Result<()> {
+        play_tic_tac_toe_game::play(ctx, tile)
+    }
 }
 
 // Khai báo cấu trúc dữ liệu
