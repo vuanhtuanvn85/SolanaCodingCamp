@@ -70,6 +70,14 @@ pub mod solana_coding_camp {
     pub fn update_puppet_data(ctx: Context<UpdatePuppet>, data: u64) -> Result<()> {
         update_puppet::update_puppet_data(ctx, data)
     }
+
+    pub fn create_user_stats(ctx: Context<CreateUserStats>, name: String) -> Result<()> {
+        pda_hashmap::create_user_stats(ctx, name)
+    }
+
+    pub fn change_user_name(ctx: Context<ChangeUserName>, new_name: String) -> Result<()> {
+        pda_hashmap::change_user_name(ctx, new_name)
+    }
 }
 
 // Khai báo cấu trúc dữ liệu
