@@ -24,3 +24,9 @@ pub use setup_tic_tac_toe_game::*;
 
 pub mod play_tic_tac_toe_game;
 pub use play_tic_tac_toe_game::*;
+
+pub mod initialize_puppet;
+pub use initialize_puppet::*;
+
+pub mod update_puppet;
+pub use update_puppet::*;

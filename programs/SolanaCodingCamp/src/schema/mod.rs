@@ -12,3 +12,6 @@ pub use vote_food::*;
 
 pub mod tic_tac_toe_game;
 pub use tic_tac_toe_game::*;
+
+pub mod puppet;
+pub use puppet::*;
