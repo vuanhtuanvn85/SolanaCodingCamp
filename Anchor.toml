@@ -2,6 +2,7 @@
 seeds = false
 [programs.localnet]
 solana_coding_camp = "4Q71d52Byvx9TcyhDNJXH98HPpvdiAeToyDn1tiqyhcP"
+puppet_master = "HmbTLCmaGvZhKnn1Zfa1JVnp7vkMV4DYVxPLWBVoN65L" 
 
 [registry]
 url = "https://anchor.projectserum.com"

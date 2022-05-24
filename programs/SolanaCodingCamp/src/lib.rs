@@ -62,6 +62,14 @@ pub mod solana_coding_camp {
     pub fn play(ctx: Context<Play>, tile: Tile) -> Result<()> {
         play_tic_tac_toe_game::play(ctx, tile)
     }
+
+    pub fn initialize_puppet(ctx: Context<InitializePuppet>) -> Result<()> {
+        initialize_puppet::initialize_puppet(ctx)
+    }
+
+    pub fn update_puppet_data(ctx: Context<UpdatePuppet>, data: u64) -> Result<()> {
+        update_puppet::update_puppet_data(ctx, data)
+    }
 }
 
 // Khai báo cấu trúc dữ liệu
