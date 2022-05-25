@@ -18,8 +18,7 @@ describe('SolanaCodingCamp', () => {
   // Program
   const program = workspace.SolanaCodingCamp as Program<SolanaCodingCamp>
   const splProgram = Spl.token()
-  // Context
-  const profile = new web3.Keypair()
+
   let treasurer: web3.PublicKey
   const mint = new web3.Keypair()
   let profileTokenAccount: web3.PublicKey
@@ -30,16 +29,26 @@ describe('SolanaCodingCamp', () => {
   before(async () => {
     // Init a mint
     await initializeMint(9, mint, provider)
+
+    const [profilePDA, _] = await web3.PublicKey
+      .findProgramAddress(
+        [
+          utils.bytes.utf8.encode("profile"),
+          provider.wallet.publicKey.toBuffer()
+        ],
+        program.programId
+      );
+
     // Derive treasurer account
     const [treasurerPublicKey] = await web3.PublicKey.findProgramAddress(
-      [Buffer.from('treasurer'), profile.publicKey.toBuffer()],
+      [Buffer.from('treasurer'), profilePDA.toBuffer()],
       program.programId,
     )
     treasurer = treasurerPublicKey
     const [ballotPublicKey] = await web3.PublicKey.findProgramAddress(
       [
         Buffer.from('ballot'),
-        profile.publicKey.toBuffer(),
+        profilePDA.toBuffer(),
         provider.wallet.publicKey.toBuffer(),
       ],
       program.programId,
@@ -76,10 +85,19 @@ describe('SolanaCodingCamp', () => {
     const now = Math.floor(new Date().getTime() / 1000)
     const startTime = new BN(now)
 
+    const [profilePDA, _] = await web3.PublicKey
+      .findProgramAddress(
+        [
+          utils.bytes.utf8.encode("profile"),
+          provider.wallet.publicKey.toBuffer()
+        ],
+        program.programId
+      );
+
     await program.rpc.initializeProfile("tuan", startTime, "a@a.com", "link", "key", {
       accounts: {
         authority: provider.wallet.publicKey,
-        profile: profile.publicKey,
+        profile: profilePDA,
         treasurer,
         mint: mint.publicKey,
         profileTokenAccount,
@@ -88,10 +106,10 @@ describe('SolanaCodingCamp', () => {
         systemProgram: web3.SystemProgram.programId,
         rent: web3.SYSVAR_RENT_PUBKEY,
       },
-      signers: [profile],
+      signers: [],
     })
 
-    let profileData = await program.account.profile.fetch(profile.publicKey);
+    let profileData = await program.account.profile.fetch(profilePDA);
     console.log("profileData", profileData);
 
   })

@@ -1,6 +1,7 @@
 use crate::schema::*;
 use anchor_lang::prelude::*;
 use anchor_spl::{associated_token, token};
+use crate::errors::ErrorCode;
 
 #[derive(Accounts)]
 pub struct InitializeProfile<'info> {
@@ -11,7 +12,10 @@ pub struct InitializeProfile<'info> {
     init,
     payer = authority,
     space = Profile::SIZE,
+    seeds = [b"profile", authority.key().as_ref()], 
+    bump,
   )]
+
     pub profile: Account<'info, Profile>,
 
     #[account(seeds = [b"treasurer".as_ref(), &profile.key().to_bytes()], bump)]
@@ -36,11 +40,24 @@ pub struct InitializeProfile<'info> {
 
 pub fn exec(ctx: Context<InitializeProfile>, full_name: String, birthday: i64, email: String, ipfs_link: String, ipfs_key: String) -> Result<()> {
     let profile = &mut ctx.accounts.profile;
+    if full_name.as_bytes().len() > 100 {
+      return err!(ErrorCode::FullNameLongThan100);
+    }
+    if email.as_bytes().len() > 100 {
+      return err!(ErrorCode::EmailLongThan100);
+    }
+    if ipfs_link.as_bytes().len() > 100 {
+      return err!(ErrorCode::IPFSLinkLongThan100);
+    }
+    if ipfs_key.as_bytes().len() > 100 {
+      return err!(ErrorCode::IPFSKeyLongThan100);
+    }
     profile.full_name = full_name;
     profile.birthday = birthday;
     profile.email = email;
     profile.is_email_verified = false;
     profile.ipfs_link = ipfs_link;
     profile.ipfs_key = ipfs_key;
+    profile.bump = *ctx.bumps.get("profile").unwrap();
     Ok(())
 }

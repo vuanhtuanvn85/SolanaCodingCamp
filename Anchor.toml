@@ -1,13 +1,13 @@
 [features]
 seeds = false
-[programs.devnet]
+[programs.localnet]
 solana_coding_camp = "FJ1ddJSwnigDNeyMqC1YD9RZzkykkq7ifXCm7pTnUVX4"
 
 [registry]
 url = "https://anchor.projectserum.com"
 
 [provider]
-cluster = "devnet"
+cluster = "localnet"
 wallet = "/Users/vutuan/.config/solana/id.json"
 
 [scripts]
