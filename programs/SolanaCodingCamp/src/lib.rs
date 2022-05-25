@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-declare_id!("4Q71d52Byvx9TcyhDNJXH98HPpvdiAeToyDn1tiqyhcP");
+declare_id!("FJ1ddJSwnigDNeyMqC1YD9RZzkykkq7ifXCm7pTnUVX4");
 
 pub mod schema;
 pub use schema::*;
@@ -16,5 +16,13 @@ pub mod solana_coding_camp {
 
     use super::*;
 
-    
+    pub fn initialize_profile(ctx: Context<InitializeProfile>,
+        full_name: String, 
+        birthday: i64, 
+        email: String, 
+        ipfs_link: String, 
+        ipfs_key: String
+    ) -> Result<()> {
+        initialize_profile::exec(ctx, full_name, birthday, email, ipfs_link, ipfs_key)
+    }    
 }

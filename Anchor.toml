@@ -1,8 +1,7 @@
 [features]
 seeds = false
 [programs.localnet]
-solana_coding_camp = "4Q71d52Byvx9TcyhDNJXH98HPpvdiAeToyDn1tiqyhcP"
-puppet_master = "HmbTLCmaGvZhKnn1Zfa1JVnp7vkMV4DYVxPLWBVoN65L" 
+solana_coding_camp = "FJ1ddJSwnigDNeyMqC1YD9RZzkykkq7ifXCm7pTnUVX4"
 
 [registry]
 url = "https://anchor.projectserum.com"
