@@ -1,14 +1,19 @@
-import { configureStore } from "@reduxjs/toolkit";
-import counterReducer from "./counter.reducer";
-import walletReducer from "./wallet.reducer";
+import { configureStore } from '@reduxjs/toolkit'
+
+import walletReducer from './wallet.reducer'
+import profiles from './profiles.reducer'
 
 export const store = configureStore({
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
   reducer: {
-    counter: counterReducer,
     wallet: walletReducer,
+    profiles,
   },
-});
+})
 
-export type AppState = ReturnType<typeof store.getState>;
+export type AppState = ReturnType<typeof store.getState>
 
-export type AppDispatch = typeof store.dispatch;
+export type AppDispatch = typeof store.dispatch
