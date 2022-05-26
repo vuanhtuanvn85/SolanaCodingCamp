@@ -11,6 +11,7 @@ import { AppDispatch } from 'store'
 import CreateProfile from 'view/createProfile';
 import EditProfile from 'view/editProfile';
 import { getProgram } from '../../config'
+import "../../styles/index.css";
 var CryptoJS = require("crypto-js");
 
 const mintAddress = '5ftoDyQvRRL9wFXmaHVN4vYqfdjWue8woQSQ1T8RpinA';
@@ -29,6 +30,7 @@ function App() {
   const [skills, setSkills] = useState<string>("");
   const [workingExperience, setWorkingExperience] = useState<string>("");
   const [education, setEducation] = useState<string>("");
+  const [profilePDA, setProfilePDA] = useState<string>("");
   const [birthday, setBirthday] = useState<number>(0);
 
   const dispatch = useDispatch<AppDispatch>()
@@ -66,6 +68,7 @@ function App() {
         program.programId
       );
     console.log('===profilePDA', profilePDA.toBase58());
+    setProfilePDA(profilePDA.toBase58());
     try {
       let profileData = await program.account.profile.fetch(profilePDA);
       console.log("profileData", profileData);
@@ -138,7 +141,7 @@ function App() {
                 <Typography.Title>List of Candidates</Typography.Title>
               </Col>
               <Col>
-                {hasProfile && (<EditProfile currentFullName={fullName} currentEmailAddress={emailAddress} currentBirthday={birthday} currentIpfsLink={ipfsLink} currentPhoneNumber={phoneNumber} currentSkills={skills} currentWorkingExperience={workingExperience} currentEducation={education} />)}
+                {hasProfile && (<EditProfile currentFullName={fullName} currentEmailAddress={emailAddress} currentBirthday={birthday} currentIpfsLink={ipfsLink} currentPhoneNumber={phoneNumber} currentSkills={skills} currentWorkingExperience={workingExperience} currentEducation={education} profilePDA={profilePDA} />)}
                 {!hasProfile && (<CreateProfile />)}
               </Col>
             </Row>

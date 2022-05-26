@@ -1,7 +1,7 @@
-import { UserAddOutlined } from '@ant-design/icons'
+import { UserAddOutlined, ShareAltOutlined } from '@ant-design/icons'
 import { useConnectedWallet } from '@gokiprotocol/walletkit'
 import { BN, utils, web3 } from '@project-serum/anchor'
-import { Button, Col, DatePicker, Form, Input, Modal, notification, Row, Select, Typography } from 'antd'
+import { Button, Col, DatePicker, Form, Input, Modal, notification, Row, Select, Tooltip, Typography } from 'antd'
 import moment from 'moment'
 import { Fragment, useState, useEffect, useCallback } from 'react'
 import { useDispatch } from 'react-redux'
@@ -9,6 +9,7 @@ import { setProfile } from 'store/profiles.reducer'
 import { getProgram } from '../config'
 import { create, CID, IPFSHTTPClient } from "ipfs-http-client"
 var CryptoJS = require("crypto-js");
+import "../styles/index.css"
 
 
 const mintAddress = '5ftoDyQvRRL9wFXmaHVN4vYqfdjWue8woQSQ1T8RpinA';
@@ -39,9 +40,11 @@ interface EditProfileProps {
   currentSkills: String,
   currentWorkingExperience: String,
   currentEducation: String,
+  profilePDA: String
 }
 
-const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmailAddress, currentBirthday, currentIpfsLink, currentPhoneNumber, currentSkills, currentWorkingExperience, currentEducation }) => {
+const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmailAddress, currentBirthday, currentIpfsLink, currentPhoneNumber, currentSkills, currentWorkingExperience, currentEducation, profilePDA }) => {
+  console.log("profilePDA", profilePDA);
   const [visible, setVisible] = useState(false)
   const [loading, setLoading] = useState(false)
   const [fullName, setFullName] = useState(currentFullName)
@@ -148,10 +151,18 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
   let d = new Date(n);
   let iso = d.toISOString();
   let currentBirthdayMoment = moment(iso);
-
+  var path = location.protocol + '//' + location.host + '/someting';
+  console.log(path);
   return (
     <Fragment>
-      <Button icon={<UserAddOutlined />} onClick={() => setVisible(true)} block loading={loading}>
+      <Button icon={<ShareAltOutlined />} onClick={() => {
+        navigator.clipboard.writeText(location.protocol + '//' + location.host + '/' + profilePDA.toString());
+        notification.success({ message: 'Copied share link' })
+      }} className="mybutton">
+        Share Profile
+      </Button>
+
+      <Button icon={<UserAddOutlined />} onClick={() => setVisible(true)} block loading={loading} className="mybutton">
         Edit Profile
       </Button>
       <Modal
