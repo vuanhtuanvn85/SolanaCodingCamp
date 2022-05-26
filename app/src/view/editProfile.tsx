@@ -3,12 +3,13 @@ import { useConnectedWallet } from '@gokiprotocol/walletkit'
 import { BN, utils, web3 } from '@project-serum/anchor'
 import { Button, Col, DatePicker, Form, Input, Modal, notification, Row, Select, Typography } from 'antd'
 import moment from 'moment'
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { setProfile } from 'store/profiles.reducer'
 import { getProgram } from '../config'
 
 const mintAddress = '5ftoDyQvRRL9wFXmaHVN4vYqfdjWue8woQSQ1T8RpinA';
+
 
 const prefixSelector = (
   <Form.Item name="prefix" noStyle>
@@ -18,10 +19,6 @@ const prefixSelector = (
   </Form.Item>
 );
 
-const config = {
-  rules: [{ type: 'object' as const, required: true, message: 'Please select time!' }],
-};
-
 const layout = {
   labelCol: { span: 4 },
   wrapperCol: { span: 20 },
@@ -30,17 +27,24 @@ const tailLayout = {
   wrapperCol: { offset: 8, span: 16 },
 };
 
-const CreateProfile = () => {
+interface EditProfileProps {
+  currentFullName: string,
+  currentEmailAddress: String,
+  currentBirthday: Number
+}
+
+
+const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmailAddress, currentBirthday }) => {
   const [visible, setVisible] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [fullName, setFullName] = useState('')
+  const [fullName, setFullName] = useState('aaaa')
   const [emailAddress, setEmailAddress] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
   const [birthday, setBirthday] = useState<moment.Moment>()
   const dispatch = useDispatch()
   const wallet = useConnectedWallet()
 
-  const onCreateProfile = async () => {
+  const onUpdateProfile = async () => {
     if (!wallet || !emailAddress || !birthday || !phoneNumber) return
     console.log(wallet, emailAddress, birthday, phoneNumber)
 
@@ -60,67 +64,74 @@ const CreateProfile = () => {
       let profileData = await program.account.profile.fetch(profilePDA);
       console.log("profileData", profileData);
     } catch (error) {
+      console.log("Please create profile first!!");
+    }
 
-      let treasurer: web3.PublicKey
+    let treasurer: web3.PublicKey
 
-      const [treasurerPublicKey] = await web3.PublicKey.findProgramAddress(
-        [Buffer.from('treasurer'), profilePDA.toBuffer()],
-        program.programId,
-      )
-      console.log({ program });
-      console.log(program.programId.toBase58());
-      treasurer = treasurerPublicKey
+    const [treasurerPublicKey] = await web3.PublicKey.findProgramAddress(
+      [Buffer.from('treasurer'), profilePDA.toBuffer()],
+      program.programId,
+    )
+    console.log({ program });
+    console.log(program.programId.toBase58());
+    treasurer = treasurerPublicKey
 
-      let profileTokenAccount = await utils.token.associatedAddress({
-        mint: new web3.PublicKey(mintAddress),
-        owner: treasurerPublicKey,
+    let profileTokenAccount = await utils.token.associatedAddress({
+      mint: new web3.PublicKey(mintAddress),
+      owner: treasurerPublicKey,
+    })
+
+    try {
+      setLoading(true)
+      const tx = await program.rpc.updateProfile(fullName, new BN(birthday.valueOf() / 1000), emailAddress, "", "", {
+        accounts: {
+          authority: wallet.publicKey,
+          profile: profilePDA,
+          treasurer,
+          mint: new web3.PublicKey(mintAddress),
+          profileTokenAccount,
+          tokenProgram: utils.token.TOKEN_PROGRAM_ID,
+          associatedTokenProgram: utils.token.ASSOCIATED_PROGRAM_ID,
+          systemProgram: web3.SystemProgram.programId,
+          rent: web3.SYSVAR_RENT_PUBKEY,
+        },
+        signers: [],
       })
+      console.log(tx);
 
-      try {
-        setLoading(true)
-        const tx = await program.rpc.initializeProfile(fullName, new BN(birthday.valueOf() / 1000), emailAddress, "", "", {
-          accounts: {
-            authority: wallet.publicKey,
-            profile: profilePDA,
-            treasurer,
-            mint: new web3.PublicKey(mintAddress),
-            profileTokenAccount,
-            tokenProgram: utils.token.TOKEN_PROGRAM_ID,
-            associatedTokenProgram: utils.token.ASSOCIATED_PROGRAM_ID,
-            systemProgram: web3.SystemProgram.programId,
-            rent: web3.SYSVAR_RENT_PUBKEY,
-          },
-          signers: [],
-        })
-        console.log(tx);
-
-        dispatch(
-          setProfile({
-            full_name: fullName,
-            birthday: birthday.valueOf() / 1000,
-            email: emailAddress,
-            is_email_verified: false,
-            ipfs_link: "",
-            ipfs_key: "",
-          }),
-        )
-        setVisible(false)
-        return notification.success({ message: 'Created a profile' })
-      } catch (er: any) {
-        return notification.error({ message: er.message })
-      } finally {
-        return setLoading(false)
-      }
+      dispatch(
+        setProfile({
+          full_name: fullName,
+          birthday: birthday.valueOf() / 1000,
+          email: emailAddress,
+          is_email_verified: false,
+          ipfs_link: "",
+          ipfs_key: "",
+        }),
+      )
+      setVisible(false)
+      return notification.success({ message: 'Created a profile' })
+    } catch (er: any) {
+      return notification.error({ message: er.message })
+    } finally {
+      return setLoading(false)
     }
   }
-
+  console.log(currentBirthday);
+  let n = Number(currentBirthday) * 1000;
+  let d = new Date(n);
+  let iso = d.toISOString();
+  console.log(iso);
+  let m = moment(iso);
+  console.log(moment)
   return (
     <Fragment>
       <Button icon={<UserAddOutlined />} onClick={() => setVisible(true)} block loading={loading}>
-        New Profile
+        Edit Profile
       </Button>
       <Modal
-        title={<Typography.Title level={4}>New Profile</Typography.Title>}
+        title={<Typography.Title level={4}>Edit Profile</Typography.Title>}
         visible={visible}
         onCancel={() => setVisible(false)}
         footer={null}
@@ -131,7 +142,7 @@ const CreateProfile = () => {
         <Form
           {...layout}
           initialValues={{
-            prefix: '84',
+            prefix: '84'
           }}
         >
           <Row gutter={[12, 12]}>
@@ -139,6 +150,7 @@ const CreateProfile = () => {
               <Form.Item
                 name="fullname"
                 label="Full Name"
+                initialValue={currentFullName}
                 rules={[
                   {
                     required: true,
@@ -154,6 +166,7 @@ const CreateProfile = () => {
               <Form.Item
                 name="date-picker"
                 label="Birthday"
+                initialValue={m}
                 rules={[{ required: true, message: 'Please input your birthday!' }]}
                 labelAlign="left"
               >
@@ -164,6 +177,7 @@ const CreateProfile = () => {
               <Form.Item
                 name="emailaddress"
                 label="Email Address"
+                initialValue={currentEmailAddress}
                 rules={[
                   {
                     type: 'email',
@@ -219,8 +233,8 @@ const CreateProfile = () => {
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Button type="primary" onClick={onCreateProfile} block>
-                Create Profile
+              <Button type="primary" onClick={onUpdateProfile} block>
+                Update Profile
               </Button>
             </Col>
           </Row>
@@ -230,4 +244,4 @@ const CreateProfile = () => {
   )
 }
 
-export default CreateProfile
+export default EditProfile

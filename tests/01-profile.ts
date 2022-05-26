@@ -111,6 +111,38 @@ describe('SolanaCodingCamp', () => {
 
     let profileData = await program.account.profile.fetch(profilePDA);
     console.log("profileData", profileData);
-
   })
+
+  it('update profile', async () => {
+    const now = Math.floor(new Date().getTime() / 1000)
+    const startTime = new BN(now)
+
+    const [profilePDA, _] = await web3.PublicKey
+      .findProgramAddress(
+        [
+          utils.bytes.utf8.encode("profile"),
+          provider.wallet.publicKey.toBuffer()
+        ],
+        program.programId
+      );
+
+    await program.rpc.updateProfile("zil", startTime, "zil@zil.com", "link_link", "key_zil", {
+      accounts: {
+        authority: provider.wallet.publicKey,
+        profile: profilePDA,
+        treasurer,
+        mint: mint.publicKey,
+        profileTokenAccount,
+        tokenProgram: utils.token.TOKEN_PROGRAM_ID,
+        associatedTokenProgram: utils.token.ASSOCIATED_PROGRAM_ID,
+        systemProgram: web3.SystemProgram.programId,
+        rent: web3.SYSVAR_RENT_PUBKEY,
+      },
+      signers: [],
+    })
+
+    let profileData = await program.account.profile.fetch(profilePDA);
+    console.log("profileData", profileData);
+  })
+
 })

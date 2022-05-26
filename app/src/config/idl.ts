@@ -13,7 +13,79 @@ export type SolanaCodingCamp = {
         {
           "name": "profile",
           "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasurer",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "mint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "profileTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "fullName",
+          "type": "string"
+        },
+        {
+          "name": "birthday",
+          "type": "i64"
+        },
+        {
+          "name": "email",
+          "type": "string"
+        },
+        {
+          "name": "ipfsLink",
+          "type": "string"
+        },
+        {
+          "name": "ipfsKey",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "updateProfile",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
           "isSigner": true
+        },
+        {
+          "name": "profile",
+          "isMut": true,
+          "isSigner": false
         },
         {
           "name": "treasurer",
@@ -104,6 +176,10 @@ export type SolanaCodingCamp = {
           {
             "name": "ipfsKey",
             "type": "string"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
           }
         ]
       }
@@ -119,6 +195,26 @@ export type SolanaCodingCamp = {
       "code": 6001,
       "name": "NotEndedCandidate",
       "msg": "The candidate isn't ended"
+    },
+    {
+      "code": 6002,
+      "name": "FullNameLongThan100",
+      "msg": "The full name is long thang 100 characters"
+    },
+    {
+      "code": 6003,
+      "name": "EmailLongThan100",
+      "msg": "The email is long thang 100 characters"
+    },
+    {
+      "code": 6004,
+      "name": "IPFSLinkLongThan100",
+      "msg": "IPFS link is long thang 100 characters"
+    },
+    {
+      "code": 6005,
+      "name": "IPFSKeyLongThan100",
+      "msg": "IPFS key is long thang 100 characters"
     }
   ]
 };
@@ -138,7 +234,79 @@ export const IDL: SolanaCodingCamp = {
         {
           "name": "profile",
           "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasurer",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "mint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "profileTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "fullName",
+          "type": "string"
+        },
+        {
+          "name": "birthday",
+          "type": "i64"
+        },
+        {
+          "name": "email",
+          "type": "string"
+        },
+        {
+          "name": "ipfsLink",
+          "type": "string"
+        },
+        {
+          "name": "ipfsKey",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "updateProfile",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
           "isSigner": true
+        },
+        {
+          "name": "profile",
+          "isMut": true,
+          "isSigner": false
         },
         {
           "name": "treasurer",
@@ -229,6 +397,10 @@ export const IDL: SolanaCodingCamp = {
           {
             "name": "ipfsKey",
             "type": "string"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
           }
         ]
       }
@@ -244,6 +416,26 @@ export const IDL: SolanaCodingCamp = {
       "code": 6001,
       "name": "NotEndedCandidate",
       "msg": "The candidate isn't ended"
+    },
+    {
+      "code": 6002,
+      "name": "FullNameLongThan100",
+      "msg": "The full name is long thang 100 characters"
+    },
+    {
+      "code": 6003,
+      "name": "EmailLongThan100",
+      "msg": "The email is long thang 100 characters"
+    },
+    {
+      "code": 6004,
+      "name": "IPFSLinkLongThan100",
+      "msg": "IPFS link is long thang 100 characters"
+    },
+    {
+      "code": 6005,
+      "name": "IPFSKeyLongThan100",
+      "msg": "IPFS key is long thang 100 characters"
     }
   ]
 };

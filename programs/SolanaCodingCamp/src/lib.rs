@@ -25,4 +25,13 @@ pub mod solana_coding_camp {
     ) -> Result<()> {
         initialize_profile::exec(ctx, full_name, birthday, email, ipfs_link, ipfs_key)
     }    
+    pub fn update_profile(ctx: Context<UpdateProfile>,
+        full_name: String, 
+        birthday: i64, 
+        email: String, 
+        ipfs_link: String, 
+        ipfs_key: String
+    ) -> Result<()> {
+        update_profile::exec(ctx, full_name, birthday, email, ipfs_link, ipfs_key)
+    }    
 }
