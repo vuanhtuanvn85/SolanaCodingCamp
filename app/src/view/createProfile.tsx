@@ -1,7 +1,7 @@
 import { UserAddOutlined } from '@ant-design/icons'
 import { useConnectedWallet } from '@gokiprotocol/walletkit'
 import { BN, utils, web3 } from '@project-serum/anchor'
-import { Button, Col, DatePicker, Form, Input, Modal, notification, Row, Select, Typography } from 'antd'
+import { Button, Col, DatePicker, Form, Input, Modal, notification, Row, Select, Typography, Image } from 'antd'
 import moment from 'moment'
 import { Fragment, useState } from 'react'
 import { useDispatch } from 'react-redux'
@@ -142,9 +142,39 @@ const CreateProfile = () => {
 
   return (
     <Fragment>
-      <Button icon={<UserAddOutlined />} onClick={() => setVisible(true)} block loading={loading}>
-        New Profile
-      </Button>
+
+      <Col span={24}>
+        <Typography.Title level={1}></Typography.Title>
+      </Col>
+      <Col span={24}>
+        <Typography.Title level={1}></Typography.Title>
+      </Col>
+      <Col span={24}>
+        <Image preview={false} style={{ width: "85vw", marginLeft: "60px" }} src="../..//images/createprofile.png" />
+      </Col>
+      <Col span={24} style={{ marginLeft: "65px" }}>
+        <Button icon={<UserAddOutlined />} onClick={() => setVisible(true)} block loading={loading} className="mybutton">
+          New Profile
+        </Button>
+      </Col>
+
+      <Col span={24} style={{ marginLeft: "80px", marginTop: "15px" }}>
+        <Typography.Text>
+          Looking to hire instead?
+        </Typography.Text>
+        <Typography.Link href="https://web3vn.solana.com/" target="_blank" >
+          Hire developers
+        </Typography.Link>
+      </Col>
+      <Col span={24}>
+        <Typography.Title level={1}></Typography.Title>
+      </Col>
+      <Col span={24}>
+        <Typography.Title level={1}></Typography.Title>
+      </Col>
+      <Col span={24}>
+        <Typography.Title level={1}></Typography.Title>
+      </Col>
       <Modal
         title={<Typography.Title level={4}>New Profile</Typography.Title>}
         visible={visible}
@@ -152,7 +182,7 @@ const CreateProfile = () => {
         footer={null}
         destroyOnClose={false}
         centered={true}
-        width={1000}
+        width={900}
       >
         <Form
           {...layout}
@@ -245,7 +275,7 @@ const CreateProfile = () => {
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Button type="primary" onClick={onCreateProfile} block>
+              <Button className="mydialogbutton" onClick={onCreateProfile} block>
                 Create Profile
               </Button>
             </Col>

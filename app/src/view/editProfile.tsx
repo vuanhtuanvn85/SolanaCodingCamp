@@ -1,7 +1,7 @@
 import { UserAddOutlined, ShareAltOutlined } from '@ant-design/icons'
 import { useConnectedWallet } from '@gokiprotocol/walletkit'
 import { BN, utils, web3 } from '@project-serum/anchor'
-import { Button, Col, DatePicker, Form, Input, Modal, notification, Row, Select, Tooltip, Typography } from 'antd'
+import { Button, Col, DatePicker, Form, Input, Modal, notification, Row, Select, Space, Tooltip, Typography, Image } from 'antd'
 import moment from 'moment'
 import { Fragment, useState, useEffect, useCallback } from 'react'
 import { useDispatch } from 'react-redux'
@@ -44,7 +44,7 @@ interface EditProfileProps {
 }
 
 const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmailAddress, currentBirthday, currentIpfsLink, currentPhoneNumber, currentSkills, currentWorkingExperience, currentEducation, profilePDA }) => {
-  console.log("profilePDA", profilePDA);
+  console.log("====profilePDA", profilePDA);
   const [visible, setVisible] = useState(false)
   const [loading, setLoading] = useState(false)
   const [fullName, setFullName] = useState(currentFullName)
@@ -82,6 +82,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
         program.programId
       );
     // console.log('profilePDA', profilePDA.toBase58());
+
 
     let treasurer: web3.PublicKey
 
@@ -157,16 +158,45 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
 
   return (
     <Fragment>
-      <Button icon={<ShareAltOutlined />} onClick={() => {
-        navigator.clipboard.writeText(location.protocol + '//' + location.host + '/' + profilePDA.toString());
-        notification.success({ message: 'Copied share link' })
-      }} className="mybutton">
-        Share Profile
-      </Button>
+      <Col span={24}>
+        <Typography.Title level={1}></Typography.Title>
+      </Col>
+      <Col span={24}>
+        <Typography.Title level={1}></Typography.Title>
+      </Col>
+      <Col span={24}>
+        <Image preview={false} style={{ width: "85vw", marginLeft: "60px" }} src="../..//images/createprofile.png" />
+      </Col>
+      <Col span={24} style={{ marginLeft: "65px" }}>
+        <Button icon={<UserAddOutlined />} onClick={() => setVisible(true)} block loading={loading} className="mybutton">
+          Edit Profile
+        </Button>
+        <Button icon={<ShareAltOutlined />} onClick={() => {
+          navigator.clipboard.writeText(location.protocol + '//' + location.host + '/vote/' + profilePDA.toString());
+          notification.success({ message: 'Copied share link' })
+        }} className="mybutton">
+          Share Profile
+        </Button>
+      </Col>
+      <Col span={24} style={{ marginLeft: "80px", marginTop: "15px" }}>
+        <Typography.Text>
+          Looking to hire instead?
+        </Typography.Text>
+        <Typography.Link href="https://web3vn.solana.com/" target="_blank" >
+          Hire developers
+        </Typography.Link>
+      </Col>
 
-      <Button icon={<UserAddOutlined />} onClick={() => setVisible(true)} block loading={loading} className="mybutton">
-        Edit Profile
-      </Button>
+      <Col span={24}>
+        <Typography.Title level={1}></Typography.Title>
+      </Col>
+      <Col span={24}>
+        <Typography.Title level={1}></Typography.Title>
+      </Col>
+      <Col span={24}>
+        <Typography.Title level={1}></Typography.Title>
+      </Col>
+
       <Modal
         title={<Typography.Title level={4}>Edit Profile</Typography.Title>}
         visible={visible}
@@ -174,7 +204,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
         footer={null}
         destroyOnClose={false}
         centered={true}
-        width={1000}
+        width={900}
       >
         <Form
           {...layout}
@@ -224,7 +254,24 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
                 labelAlign="left"
               >
                 <Input onChange={(e) => setEmailAddress(e.target.value || '')} />
+
               </Form.Item>
+              <Form.Item
+                name="a"
+                label=" "
+              >
+                <Space>
+
+                  <Button danger>Click to verify</Button>
+                  <Input placeholder="Code from your email"
+                  />
+                  {/* <Button style={{ border: "1px solid green", color: "green" }} ghost>
+                      Verified
+                    </Button> */}
+                </Space>
+              </Form.Item>
+
+
             </Col>
             <Col span={24}>
               <Form.Item
@@ -274,7 +321,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Button type="primary" onClick={onUpdateProfile} block>
+              <Button className="mydialogbutton" onClick={onUpdateProfile} block>
                 Update Profile
               </Button>
             </Col>

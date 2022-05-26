@@ -1,4 +1,30 @@
 .mybutton {
-    width: 45% !important;
-    margin: 0 5px;
+    width: 150px !important;
+    margin: 0 15px !important;
+    height: 50px !important;
+    background: #06bcd3 !important;
+    color: #fff !important;
 }
+.ant-layout-content {
+    background-color: #fafafa !important;
+}
+.ant-layout-header {
+    background: #fff !important;
+    border-bottom: 1px solid #e8e8e8 !important;
+}
+.ant-layout-footer {
+    background-color: #0095a4 !important;
+}
+.footerlink {
+    color: #fff !important;
+    text-decoration: underline !important;
+}
+.ant-form-item {
+    margin-bottom: 10px !important;
+}
+
+.mydialogbutton{ 
+    background-color: #06bcd3 !important;
+    color: #fff !important;
+}
+

@@ -4,12 +4,13 @@ import { useWalletKit, useSolana, useConnectedWallet } from '@gokiprotocol/walle
 import { clusterApiUrl, Connection, Keypair, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { web3, utils, BN } from '@project-serum/anchor'
 
-import { Button, Col, Layout, Row, Space, Typography } from 'antd'
+import { Button, Col, Layout, Row, Space, Typography, Image } from 'antd'
 
 import { setWalletInfo, WalletState } from 'store/wallet.reducer'
 import { AppDispatch } from 'store'
 import CreateProfile from 'view/createProfile';
 import EditProfile from 'view/editProfile';
+import ListJobs from 'view/listJobs';
 import { getProgram } from '../../config'
 import "../../styles/index.css";
 var CryptoJS = require("crypto-js");
@@ -21,7 +22,7 @@ function App() {
   const [balance, setBalance] = useState<number>(0);
   const [tokenBalance, setTokenBalance] = useState<number>(0);
   const [walletAddress, setWalletAdress] = useState<string>("");
-  const [hasProfile, setHasProfile] = useState<boolean>(true);
+  const [hasProfile, setHasProfile] = useState<boolean>(false);
   const [fullName, setFullName] = useState<string>("");
   const [emailAddress, setEmailAddress] = useState<string>("");
   const [ipfsLink, setIpfsLink] = useState<string>("");
@@ -77,7 +78,7 @@ function App() {
       setBirthday(Number(profileData.birthday));
       setIpfsLink(profileData.ipfsLink);
       setIpfsKey(profileData.ipfsKey);
-
+      setHasProfile(true)
       console.log('ipfslink  index.tsx', profileData.ipfsLink);
       const response = await fetch('https://ipfs.io/ipfs/' + profileData.ipfsLink);
       const responseJSON = await response.json();
@@ -96,37 +97,52 @@ function App() {
   }, [fetchWalletInfo])
 
   return (
-    <Layout style={{ height: '100vh' }}>
+    <Layout>
       <Layout.Header>
         <Row justify="end">
           <Col span={4}>
-            <Typography.Text style={{ color: 'white' }}>
-              GamCheckWorks
+            <Typography.Text style={{ color: '#08626f', fontSize: '32px', fontWeight: 'bolder' }}>
+              G
+            </Typography.Text>
+            <Typography.Text style={{ color: '#08626f', fontSize: '28px', fontWeight: 'bolder' }}>
+              am
+            </Typography.Text>
+            <Typography.Text style={{ color: '#08626f', fontSize: '32px', fontWeight: 'bolder' }}>
+              C
+            </Typography.Text>
+            <Typography.Text style={{ color: '#08626f', fontSize: '28px', fontWeight: 'bolder' }}>
+              heck
+            </Typography.Text>
+            <Typography.Text style={{ color: '#08626f', fontSize: '32px', fontWeight: 'bolder' }}>
+              W
+            </Typography.Text>
+            <Typography.Text style={{ color: '#08626f', fontSize: '28px', fontWeight: 'bolder' }}>
+              orks
             </Typography.Text>
           </Col>
           <Col span={20} style={{ textAlign: 'right' }}>
             {wallet ? (
               <Space>
-                <Typography.Text style={{ color: 'white' }}>
+                <Typography.Text style={{ color: 'gray', fontWeight: 'bold', padding: '6px 12px', borderRadius: '9999px', border: '1px solid' }}>
                   {/* {walletAddress} */}
-                  {walletAddress.substr(0, 5) + '...' + walletAddress.substr(-5)}
+                  {walletAddress.substr(0, 6) + '...' + walletAddress.substr(-6)}
                 </Typography.Text>
-                <Typography.Text style={{ color: 'gray' }}>
+                <Typography.Text style={{ color: 'gray', padding: '6px 12px', borderRadius: '9999px', border: '1px solid' }}>
                   {typeof balance === "number"
                     ? `${(balance / LAMPORTS_PER_SOL).toLocaleString()} SOL`
                     : "--"}
                 </Typography.Text>
-                <Typography.Text style={{ color: 'white' }}>
+                <Typography.Text style={{ color: '#fff', fontWeight: 'bold', padding: '6px 12px', borderRadius: '9999px', background: '#08626f' }}>
                   {typeof tokenBalance === "number"
                     ? `${(tokenBalance).toLocaleString()} GCW`
                     : "--"}
                 </Typography.Text>
-                <Button type="primary" onClick={disconnect}>
+                <Button className="mydialogbutton" onClick={disconnect}>
                   Disconnect
                 </Button>
               </Space>
             ) : (
-              <Button type="primary" onClick={connect}>
+              <Button className="mydialogbutton" onClick={connect}>
                 Connect Wallet
               </Button>
             )}
@@ -137,22 +153,78 @@ function App() {
         <Row gutter={[24, 24]}>
           <Col span={24}>
             <Row gutter={[24, 24]}>
-              <Col flex="auto">
-                <Typography.Title>List of Profiles</Typography.Title>
-              </Col>
               <Col>
                 {hasProfile && (<EditProfile currentFullName={fullName} currentEmailAddress={emailAddress} currentBirthday={birthday} currentIpfsLink={ipfsLink} currentPhoneNumber={phoneNumber} currentSkills={skills} currentWorkingExperience={workingExperience} currentEducation={education} profilePDA={profilePDA} />)}
                 {!hasProfile && (<CreateProfile />)}
               </Col>
             </Row>
           </Col>
-          {/* <Col span={24}>
-            <ListCandidates />
-          </Col> */}
+          <Col span={24}>
+            <Row gutter={[24, 24]}>
+              <Col flex="auto">
+                <Typography.Title level={3}>Explore developer jobs</Typography.Title>
+              </Col>
+            </Row>
+          </Col>
+          <Col span={24}>
+            <ListJobs />
+          </Col>
+          <Col span={24}>
+            <Typography.Title level={4}></Typography.Title>
+          </Col>
+          <Col span={24}>
+            <Typography.Title level={4}>Based on your skills</Typography.Title>
+          </Col>
+          <Col span={24}>
+            <Image preview={false} style={{ width: "85vw", marginLeft: "75px" }} src="../../images/base_on_skill.png" />
+          </Col>
+          <Col span={24}>
+            <Typography.Title level={4}></Typography.Title>
+          </Col>
+          <Col span={24}>
+            <Typography.Title level={4}></Typography.Title>
+          </Col>
+          <Col span={24}>
+            <Typography.Title level={4}>Based on your role</Typography.Title>
+          </Col>
+          <Col span={24}>
+            <Image preview={false} style={{ width: "85vw", marginLeft: "75px" }} src="../../images/base_on_role.png" />
+          </Col>
         </Row>
+
+        <Col span={24}>
+          <Typography.Title level={4}></Typography.Title>
+        </Col>
+        <Col span={24}>
+          <Typography.Title level={4}></Typography.Title>
+        </Col>
+        <Col span={24}>
+          <Typography.Title level={4}></Typography.Title>
+        </Col>
+        <Col span={24}>
+          <Typography.Title level={4}></Typography.Title>
+        </Col>
+        <Col span={24}>
+          <Typography.Title level={4}></Typography.Title>
+        </Col>
+
+        <Col span={24}>
+          <Row gutter={[24, 24]}>
+            <Col>
+              {hasProfile && (<EditProfile currentFullName={fullName} currentEmailAddress={emailAddress} currentBirthday={birthday} currentIpfsLink={ipfsLink} currentPhoneNumber={phoneNumber} currentSkills={skills} currentWorkingExperience={workingExperience} currentEducation={education} profilePDA={profilePDA} />)}
+              {!hasProfile && (<CreateProfile />)}
+            </Col>
+          </Row>
+        </Col>
+
+
       </Layout.Content>
       <Layout.Footer style={{ textAlign: 'center' }}>
-        <Typography.Link href="https://web3vn.solana.com/" target="_blank">
+        <Typography.Text style={{ color: '#fff' }}>
+          Tuan Vu @ &nbsp;
+        </Typography.Text>
+
+        <Typography.Link href="https://web3vn.solana.com/" target="_blank" className='footerlink'>
           Solana - Vietnam Web3 Coding Camp - 2022
         </Typography.Link>
       </Layout.Footer>
