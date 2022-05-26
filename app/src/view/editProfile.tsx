@@ -3,14 +3,16 @@ import { useConnectedWallet } from '@gokiprotocol/walletkit'
 import { BN, utils, web3 } from '@project-serum/anchor'
 import { Button, Col, DatePicker, Form, Input, Modal, notification, Row, Select, Typography } from 'antd'
 import moment from 'moment'
-import { Fragment, useState, useEffect } from 'react'
+import { Fragment, useState, useEffect, useCallback } from 'react'
 import { useDispatch } from 'react-redux'
 import { setProfile } from 'store/profiles.reducer'
 import { getProgram } from '../config'
 import { create, CID, IPFSHTTPClient } from "ipfs-http-client"
+var CryptoJS = require("crypto-js");
+
 
 const mintAddress = '5ftoDyQvRRL9wFXmaHVN4vYqfdjWue8woQSQ1T8RpinA';
-
+const passwordWillBeRandom = 'LZGqa:~u""D]Y-6(Nq+mL/DG%$Emn2}}';
 
 const prefixSelector = (
   <Form.Item name="prefix" noStyle>
@@ -31,10 +33,15 @@ const tailLayout = {
 interface EditProfileProps {
   currentFullName: string,
   currentEmailAddress: String,
-  currentBirthday: Number
+  currentBirthday: Number,
+  currentIpfsLink: String,
+  currentPhoneNumber: String,
+  currentSkills: String,
+  currentWorkingExperience: String,
+  currentEducation: String,
 }
 
-const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmailAddress, currentBirthday }) => {
+const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmailAddress, currentBirthday, currentIpfsLink, currentPhoneNumber, currentSkills, currentWorkingExperience, currentEducation }) => {
   const [visible, setVisible] = useState(false)
   const [loading, setLoading] = useState(false)
   const [fullName, setFullName] = useState(currentFullName)
@@ -58,11 +65,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
       ipfs = undefined;
     }
 
-    // console.log("ipfs", ipfs);
-    console.log(wallet, fullName, emailAddress, birthday, phoneNumber)
-
     if (!wallet || (fullName && !emailAddress && !birthday && !ipfs)) return
-    // console.log("ipfs2", ipfs);
 
     const program = getProgram(wallet)
 
@@ -76,16 +79,12 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
       );
     // console.log('profilePDA', profilePDA.toBase58());
 
-
-
     let treasurer: web3.PublicKey
 
     const [treasurerPublicKey] = await web3.PublicKey.findProgramAddress(
       [Buffer.from('treasurer'), profilePDA.toBuffer()],
       program.programId,
     )
-    // console.log({ program });
-    // console.log("programId", program.programId.toBase58());
     treasurer = treasurerPublicKey
 
     let profileTokenAccount = await utils.token.associatedAddress({
@@ -94,28 +93,24 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
     })
 
     try {
-      console.log("birthday", birthday);
       if (!birthday) return
       let newBirthday = new BN(birthday.valueOf() / 1000);
-      console.log("newBirthday", newBirthday);
 
 
       const ipfsContent = `{"Full Name": "` + fullName + `", 
       "Birthday": "` + newBirthday + `", 
       "Email": "` + emailAddress + `", 
-      "Phone Number ": "` + phoneNumber + `", 
-      "Skills": "` + skills + `", 
-      "Working Experience": "` + workingExperience + `", 
-      "Education": "` + education + `"}`
-      console.log("ipfsContent", ipfsContent);
+      "Phone Number ": "` + CryptoJS.AES.encrypt(phoneNumber, passwordWillBeRandom).toString() + `", 
+      "Skills": "` + CryptoJS.AES.encrypt(skills, passwordWillBeRandom).toString() + `", 
+      "Working Experience": "` + CryptoJS.AES.encrypt(workingExperience, passwordWillBeRandom).toString() + `", 
+      "Education": "` + CryptoJS.AES.encrypt(education, passwordWillBeRandom).toString() + `"}`
       if (!ipfs) return
       const fileAdded = await ipfs.add({ path: '', content: ipfsContent });
 
       const ipfsPath = fileAdded.path;
-      console.log(ipfsPath);
 
       setLoading(true)
-      const tx = await program.rpc.updateProfile(fullName, new BN(birthday.valueOf() / 1000), emailAddress, ipfsPath, "", {
+      const tx = await program.rpc.updateProfile(fullName, new BN(birthday.valueOf() / 1000), emailAddress, ipfsPath, passwordWillBeRandom, {
         accounts: {
           authority: wallet.publicKey,
           profile: profilePDA,
@@ -149,13 +144,11 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
       return setLoading(false)
     }
   }
-  // console.log(currentBirthday);
   let n = Number(currentBirthday) * 1000;
   let d = new Date(n);
   let iso = d.toISOString();
-  // console.log(iso);
   let currentBirthdayMoment = moment(iso);
-  // console.log(moment)
+
   return (
     <Fragment>
       <Button icon={<UserAddOutlined />} onClick={() => setVisible(true)} block loading={loading}>
@@ -225,6 +218,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
                 name="phone"
                 label="Phone Number"
                 labelAlign="left"
+                initialValue={currentPhoneNumber}
               >
                 <Input addonBefore={prefixSelector} style={{ width: '100%' }} onChange={(e) => setPhoneNumber(e.target.value || '')} />
               </Form.Item>
@@ -235,6 +229,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
                 name="skills"
                 label="Skills"
                 hasFeedback
+                initialValue={currentSkills}
                 rules={[{ required: true, message: 'Please input your skills!' }]}
                 labelAlign="left"
               >
@@ -248,6 +243,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
                 hasFeedback
                 rules={[{ required: true, message: 'Please input your working experience!' }]}
                 labelAlign="left"
+                initialValue={currentWorkingExperience}
               >
                 <Input.TextArea allowClear showCount rows={5} onChange={(e) => setWorkingExperience(e.target.value || '')} />
               </Form.Item>
@@ -259,6 +255,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
                 hasFeedback
                 rules={[{ required: true, message: 'Please input your education!' }]}
                 labelAlign="left"
+                initialValue={currentEducation}
               >
                 <Input.TextArea allowClear showCount rows={5} onChange={(e) => setEducation(e.target.value || '')} />
               </Form.Item>

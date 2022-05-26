@@ -11,8 +11,10 @@ import { AppDispatch } from 'store'
 import CreateProfile from 'view/createProfile';
 import EditProfile from 'view/editProfile';
 import { getProgram } from '../../config'
+var CryptoJS = require("crypto-js");
 
 const mintAddress = '5ftoDyQvRRL9wFXmaHVN4vYqfdjWue8woQSQ1T8RpinA';
+const passwordWillBeRandom = 'LZGqa:~u""D]Y-6(Nq+mL/DG%$Emn2}}';
 
 function App() {
   const [balance, setBalance] = useState<number>(0);
@@ -21,6 +23,12 @@ function App() {
   const [hasProfile, setHasProfile] = useState<boolean>(true);
   const [fullName, setFullName] = useState<string>("");
   const [emailAddress, setEmailAddress] = useState<string>("");
+  const [ipfsLink, setIpfsLink] = useState<string>("");
+  const [ipfsKey, setIpfsKey] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [skills, setSkills] = useState<string>("");
+  const [workingExperience, setWorkingExperience] = useState<string>("");
+  const [education, setEducation] = useState<string>("");
   const [birthday, setBirthday] = useState<number>(0);
 
   const dispatch = useDispatch<AppDispatch>()
@@ -37,7 +45,6 @@ function App() {
       owner: wallet.publicKey,
     })
     const tokenBalanceInfo = await providerMut.connection.getTokenAccountBalance(tokenAccount);
-    // console.log("token balance (method 2): ", tokenBalanceInfo.value.uiAmount);
 
     let walletInfo: WalletState = {
       walletAddress: wallet.publicKey.toBase58(),
@@ -45,7 +52,6 @@ function App() {
       tokenBalance: tokenBalanceInfo.value.uiAmount ? tokenBalanceInfo.value.uiAmount : 0,
     }
     dispatch(setWalletInfo(walletInfo))
-    // console.log(walletInfo);
     setBalance(walletInfo.balance)
     setTokenBalance(walletInfo.tokenBalance)
     setWalletAdress(walletInfo.walletAddress)
@@ -59,13 +65,24 @@ function App() {
         ],
         program.programId
       );
-    // console.log('profilePDA', profilePDA.toBase58());
+    console.log('===profilePDA', profilePDA.toBase58());
     try {
       let profileData = await program.account.profile.fetch(profilePDA);
       console.log("profileData", profileData);
       setFullName(profileData.fullName);
       setEmailAddress(profileData.email);
       setBirthday(Number(profileData.birthday));
+      setIpfsLink(profileData.ipfsLink);
+      setIpfsKey(profileData.ipfsKey);
+
+      console.log('ipfslink  index.tsx', profileData.ipfsLink);
+      const response = await fetch('https://ipfs.io/ipfs/' + profileData.ipfsLink);
+      const responseJSON = await response.json();
+      setPhoneNumber(CryptoJS.AES.decrypt(responseJSON['Phone Number '], passwordWillBeRandom).toString(CryptoJS.enc.Utf8));
+      setSkills(CryptoJS.AES.decrypt(responseJSON['Skills'], passwordWillBeRandom).toString(CryptoJS.enc.Utf8));
+      setWorkingExperience(CryptoJS.AES.decrypt(responseJSON['Working Experience'], passwordWillBeRandom).toString(CryptoJS.enc.Utf8));
+      setEducation(CryptoJS.AES.decrypt(responseJSON['Education'], passwordWillBeRandom).toString(CryptoJS.enc.Utf8));
+
     } catch (error) {
       setHasProfile(false)
     }
@@ -74,8 +91,6 @@ function App() {
   useEffect(() => {
     fetchWalletInfo()
   }, [fetchWalletInfo])
-
-
 
   return (
     <Layout style={{ height: '100vh' }}>
@@ -123,7 +138,7 @@ function App() {
                 <Typography.Title>List of Candidates</Typography.Title>
               </Col>
               <Col>
-                {hasProfile && (<EditProfile currentFullName={fullName} currentEmailAddress={emailAddress} currentBirthday={birthday} />)}
+                {hasProfile && (<EditProfile currentFullName={fullName} currentEmailAddress={emailAddress} currentBirthday={birthday} currentIpfsLink={ipfsLink} currentPhoneNumber={phoneNumber} currentSkills={skills} currentWorkingExperience={workingExperience} currentEducation={education} />)}
                 {!hasProfile && (<CreateProfile />)}
               </Col>
             </Row>
