@@ -138,7 +138,7 @@ function App() {
           <Col span={24}>
             <Row gutter={[24, 24]}>
               <Col flex="auto">
-                <Typography.Title>List of Candidates</Typography.Title>
+                <Typography.Title>List of Profiles</Typography.Title>
               </Col>
               <Col>
                 {hasProfile && (<EditProfile currentFullName={fullName} currentEmailAddress={emailAddress} currentBirthday={birthday} currentIpfsLink={ipfsLink} currentPhoneNumber={phoneNumber} currentSkills={skills} currentWorkingExperience={workingExperience} currentEducation={education} profilePDA={profilePDA} />)}

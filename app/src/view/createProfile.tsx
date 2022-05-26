@@ -8,8 +8,10 @@ import { useDispatch } from 'react-redux'
 import { setProfile } from 'store/profiles.reducer'
 import { getProgram } from '../config'
 import { create, CID, IPFSHTTPClient } from "ipfs-http-client"
+var CryptoJS = require("crypto-js");
 
 const mintAddress = '5ftoDyQvRRL9wFXmaHVN4vYqfdjWue8woQSQ1T8RpinA';
+const passwordWillBeRandom = 'LZGqa:~u""D]Y-6(Nq+mL/DG%$Emn2}}';
 
 const prefixSelector = (
   <Form.Item name="prefix" noStyle>
@@ -38,24 +40,27 @@ const CreateProfile = () => {
   const [emailAddress, setEmailAddress] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
   const [birthday, setBirthday] = useState<moment.Moment>()
+  const [skills, setSkills] = useState('')
+  const [workingExperience, setWorkingExperience] = useState('')
+  const [education, setEducation] = useState('')
   const dispatch = useDispatch()
   const wallet = useConnectedWallet()
 
-  let ipfs: IPFSHTTPClient | undefined;
-  try {
-    ipfs = create({
-      url: "https://ipfs.infura.io:5001/api/v0",
-
-    });
-  } catch (error) {
-    console.error("IPFS error ", error);
-    ipfs = undefined;
-  }
-
-
   const onCreateProfile = async () => {
-    if (!wallet || fullName || !emailAddress || !birthday || !ipfs) return
-    console.log(wallet, fullName, emailAddress, birthday, phoneNumber)
+    console.log("========CREATE PROFILE ==========");
+    let ipfs: IPFSHTTPClient | undefined;
+    try {
+      ipfs = create({
+        url: "https://ipfs.infura.io:5001/api/v0",
+
+      });
+    } catch (error) {
+      console.error("IPFS error ", error);
+      ipfs = undefined;
+    }
+
+    if (!wallet || !fullName || !emailAddress || !birthday || !ipfs) return
+    // console.log(wallet, fullName, emailAddress, birthday, phoneNumber)
 
     const program = getProgram(wallet)
 
@@ -69,61 +74,69 @@ const CreateProfile = () => {
       );
     console.log('profilePDA', profilePDA.toBase58());
 
+    let treasurer: web3.PublicKey
+
+    const [treasurerPublicKey] = await web3.PublicKey.findProgramAddress(
+      [Buffer.from('treasurer'), profilePDA.toBuffer()],
+      program.programId,
+    )
+    // console.log({ program });
+    // console.log(program.programId.toBase58());
+    treasurer = treasurerPublicKey
+
+    let profileTokenAccount = await utils.token.associatedAddress({
+      mint: new web3.PublicKey(mintAddress),
+      owner: treasurerPublicKey,
+    })
+    console.log('a');
     try {
-      let profileData = await program.account.profile.fetch(profilePDA);
-      console.log("profileData", profileData);
-    } catch (error) {
+      setLoading(true)
+      const ipfsContent = `{"Full Name": "` + fullName + `", 
+        "Birthday": "` + birthday + `", 
+        "Email": "` + emailAddress + `", 
+        "Phone Number ": "` + CryptoJS.AES.encrypt(phoneNumber, passwordWillBeRandom).toString() + `", 
+        "Skills": "` + CryptoJS.AES.encrypt(skills, passwordWillBeRandom).toString() + `", 
+        "Working Experience": "` + CryptoJS.AES.encrypt(workingExperience, passwordWillBeRandom).toString() + `", 
+        "Education": "` + CryptoJS.AES.encrypt(education, passwordWillBeRandom).toString() + `"}`
 
-      let treasurer: web3.PublicKey
+      console.log(ipfsContent);
+      if (!ipfs) return
+      const fileAdded = await ipfs.add({ path: '', content: ipfsContent });
 
-      const [treasurerPublicKey] = await web3.PublicKey.findProgramAddress(
-        [Buffer.from('treasurer'), profilePDA.toBuffer()],
-        program.programId,
-      )
-      console.log({ program });
-      console.log(program.programId.toBase58());
-      treasurer = treasurerPublicKey
-
-      let profileTokenAccount = await utils.token.associatedAddress({
-        mint: new web3.PublicKey(mintAddress),
-        owner: treasurerPublicKey,
+      const ipfsPath = fileAdded.path;
+      console.log("ipfsPath", ipfsPath);
+      const tx = await program.rpc.initializeProfile(fullName, new BN(birthday.valueOf() / 1000), emailAddress, ipfsPath, passwordWillBeRandom, {
+        accounts: {
+          authority: wallet.publicKey,
+          profile: profilePDA,
+          treasurer,
+          mint: new web3.PublicKey(mintAddress),
+          profileTokenAccount,
+          tokenProgram: utils.token.TOKEN_PROGRAM_ID,
+          associatedTokenProgram: utils.token.ASSOCIATED_PROGRAM_ID,
+          systemProgram: web3.SystemProgram.programId,
+          rent: web3.SYSVAR_RENT_PUBKEY,
+        },
+        signers: [],
       })
+      console.log(tx);
 
-      try {
-        setLoading(true)
-        const tx = await program.rpc.initializeProfile(fullName, new BN(birthday.valueOf() / 1000), emailAddress, "", "", {
-          accounts: {
-            authority: wallet.publicKey,
-            profile: profilePDA,
-            treasurer,
-            mint: new web3.PublicKey(mintAddress),
-            profileTokenAccount,
-            tokenProgram: utils.token.TOKEN_PROGRAM_ID,
-            associatedTokenProgram: utils.token.ASSOCIATED_PROGRAM_ID,
-            systemProgram: web3.SystemProgram.programId,
-            rent: web3.SYSVAR_RENT_PUBKEY,
-          },
-          signers: [],
-        })
-        console.log(tx);
-
-        dispatch(
-          setProfile({
-            full_name: fullName,
-            birthday: birthday.valueOf() / 1000,
-            email: emailAddress,
-            is_email_verified: false,
-            ipfs_link: "",
-            ipfs_key: "",
-          }),
-        )
-        setVisible(false)
-        return notification.success({ message: 'Created a profile' })
-      } catch (er: any) {
-        return notification.error({ message: er.message })
-      } finally {
-        return setLoading(false)
-      }
+      dispatch(
+        setProfile({
+          full_name: fullName,
+          birthday: birthday.valueOf() / 1000,
+          email: emailAddress,
+          is_email_verified: false,
+          ipfs_link: ipfsPath,
+          ipfs_key: passwordWillBeRandom,
+        }),
+      )
+      setVisible(false)
+      return notification.success({ message: 'Created a profile' })
+    } catch (er: any) {
+      return notification.error({ message: er.message })
+    } finally {
+      return setLoading(false)
     }
   }
 
@@ -206,7 +219,7 @@ const CreateProfile = () => {
                 rules={[{ required: true, message: 'Please input your skills!' }]}
                 labelAlign="left"
               >
-                <Input.TextArea allowClear showCount rows={5} />
+                <Input.TextArea allowClear showCount rows={5} onChange={(e) => setSkills(e.target.value || '')} />
               </Form.Item>
             </Col>
             <Col span={24}>
@@ -217,7 +230,7 @@ const CreateProfile = () => {
                 rules={[{ required: true, message: 'Please input your working experience!' }]}
                 labelAlign="left"
               >
-                <Input.TextArea allowClear showCount rows={5} />
+                <Input.TextArea allowClear showCount rows={5} onChange={(e) => setWorkingExperience(e.target.value || '')} />
               </Form.Item>
             </Col>
             <Col span={24}>
@@ -228,7 +241,7 @@ const CreateProfile = () => {
                 rules={[{ required: true, message: 'Please input your education!' }]}
                 labelAlign="left"
               >
-                <Input.TextArea allowClear showCount rows={5} />
+                <Input.TextArea allowClear showCount rows={5} onChange={(e) => setEducation(e.target.value || '')} />
               </Form.Item>
             </Col>
             <Col span={24}>

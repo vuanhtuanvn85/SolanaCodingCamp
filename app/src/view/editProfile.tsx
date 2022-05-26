@@ -54,6 +54,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
   const [skills, setSkills] = useState('')
   const [workingExperience, setWorkingExperience] = useState('')
   const [education, setEducation] = useState('')
+
   const dispatch = useDispatch()
   const wallet = useConnectedWallet()
 
@@ -100,6 +101,9 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
       let newBirthday = new BN(birthday.valueOf() / 1000);
 
 
+
+
+      setLoading(true)
       const ipfsContent = `{"Full Name": "` + fullName + `", 
       "Birthday": "` + newBirthday + `", 
       "Email": "` + emailAddress + `", 
@@ -112,7 +116,6 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
 
       const ipfsPath = fileAdded.path;
 
-      setLoading(true)
       const tx = await program.rpc.updateProfile(fullName, new BN(birthday.valueOf() / 1000), emailAddress, ipfsPath, passwordWillBeRandom, {
         accounts: {
           authority: wallet.publicKey,
@@ -136,7 +139,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
           email: emailAddress,
           is_email_verified: false,
           ipfs_link: ipfsPath,
-          ipfs_key: "",
+          ipfs_key: passwordWillBeRandom,
         }),
       )
       setVisible(false)
@@ -151,8 +154,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
   let d = new Date(n);
   let iso = d.toISOString();
   let currentBirthdayMoment = moment(iso);
-  var path = location.protocol + '//' + location.host + '/someting';
-  console.log(path);
+
   return (
     <Fragment>
       <Button icon={<ShareAltOutlined />} onClick={() => {
