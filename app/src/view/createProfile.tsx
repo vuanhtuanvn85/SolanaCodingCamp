@@ -7,6 +7,7 @@ import { Fragment, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { setProfile } from 'store/profiles.reducer'
 import { getProgram } from '../config'
+import { create, CID, IPFSHTTPClient } from "ipfs-http-client"
 
 const mintAddress = '5ftoDyQvRRL9wFXmaHVN4vYqfdjWue8woQSQ1T8RpinA';
 
@@ -40,9 +41,21 @@ const CreateProfile = () => {
   const dispatch = useDispatch()
   const wallet = useConnectedWallet()
 
+  let ipfs: IPFSHTTPClient | undefined;
+  try {
+    ipfs = create({
+      url: "https://ipfs.infura.io:5001/api/v0",
+
+    });
+  } catch (error) {
+    console.error("IPFS error ", error);
+    ipfs = undefined;
+  }
+
+
   const onCreateProfile = async () => {
-    if (!wallet || !emailAddress || !birthday || !phoneNumber) return
-    console.log(wallet, emailAddress, birthday, phoneNumber)
+    if (!wallet || fullName || !emailAddress || !birthday || !ipfs) return
+    console.log(wallet, fullName, emailAddress, birthday, phoneNumber)
 
     const program = getProgram(wallet)
 

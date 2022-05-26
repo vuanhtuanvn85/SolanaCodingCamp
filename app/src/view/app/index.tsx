@@ -37,7 +37,7 @@ function App() {
       owner: wallet.publicKey,
     })
     const tokenBalanceInfo = await providerMut.connection.getTokenAccountBalance(tokenAccount);
-    console.log("token balance (method 2): ", tokenBalanceInfo.value.uiAmount);
+    // console.log("token balance (method 2): ", tokenBalanceInfo.value.uiAmount);
 
     let walletInfo: WalletState = {
       walletAddress: wallet.publicKey.toBase58(),
@@ -45,7 +45,7 @@ function App() {
       tokenBalance: tokenBalanceInfo.value.uiAmount ? tokenBalanceInfo.value.uiAmount : 0,
     }
     dispatch(setWalletInfo(walletInfo))
-    console.log(walletInfo);
+    // console.log(walletInfo);
     setBalance(walletInfo.balance)
     setTokenBalance(walletInfo.tokenBalance)
     setWalletAdress(walletInfo.walletAddress)
@@ -59,7 +59,7 @@ function App() {
         ],
         program.programId
       );
-    console.log('profilePDA', profilePDA.toBase58());
+    // console.log('profilePDA', profilePDA.toBase58());
     try {
       let profileData = await program.account.profile.fetch(profilePDA);
       console.log("profileData", profileData);

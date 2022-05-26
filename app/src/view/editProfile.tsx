@@ -7,6 +7,7 @@ import { Fragment, useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { setProfile } from 'store/profiles.reducer'
 import { getProgram } from '../config'
+import { create, CID, IPFSHTTPClient } from "ipfs-http-client"
 
 const mintAddress = '5ftoDyQvRRL9wFXmaHVN4vYqfdjWue8woQSQ1T8RpinA';
 
@@ -33,20 +34,35 @@ interface EditProfileProps {
   currentBirthday: Number
 }
 
-
 const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmailAddress, currentBirthday }) => {
   const [visible, setVisible] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [fullName, setFullName] = useState('aaaa')
+  const [fullName, setFullName] = useState(currentFullName)
   const [emailAddress, setEmailAddress] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
   const [birthday, setBirthday] = useState<moment.Moment>()
+  const [skills, setSkills] = useState('')
+  const [workingExperience, setWorkingExperience] = useState('')
+  const [education, setEducation] = useState('')
   const dispatch = useDispatch()
   const wallet = useConnectedWallet()
 
   const onUpdateProfile = async () => {
-    if (!wallet || !emailAddress || !birthday || !phoneNumber) return
-    console.log(wallet, emailAddress, birthday, phoneNumber)
+    let ipfs: IPFSHTTPClient | undefined;
+    try {
+      ipfs = create({
+        url: "https://ipfs.infura.io:5001/api/v0",
+      });
+    } catch (error) {
+      console.error("IPFS error ", error);
+      ipfs = undefined;
+    }
+
+    // console.log("ipfs", ipfs);
+    console.log(wallet, fullName, emailAddress, birthday, phoneNumber)
+
+    if (!wallet || (fullName && !emailAddress && !birthday && !ipfs)) return
+    // console.log("ipfs2", ipfs);
 
     const program = getProgram(wallet)
 
@@ -58,14 +74,9 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
         ],
         program.programId
       );
-    console.log('profilePDA', profilePDA.toBase58());
+    // console.log('profilePDA', profilePDA.toBase58());
 
-    try {
-      let profileData = await program.account.profile.fetch(profilePDA);
-      console.log("profileData", profileData);
-    } catch (error) {
-      console.log("Please create profile first!!");
-    }
+
 
     let treasurer: web3.PublicKey
 
@@ -73,8 +84,8 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
       [Buffer.from('treasurer'), profilePDA.toBuffer()],
       program.programId,
     )
-    console.log({ program });
-    console.log(program.programId.toBase58());
+    // console.log({ program });
+    // console.log("programId", program.programId.toBase58());
     treasurer = treasurerPublicKey
 
     let profileTokenAccount = await utils.token.associatedAddress({
@@ -83,8 +94,28 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
     })
 
     try {
+      console.log("birthday", birthday);
+      if (!birthday) return
+      let newBirthday = new BN(birthday.valueOf() / 1000);
+      console.log("newBirthday", newBirthday);
+
+
+      const ipfsContent = `{"Full Name": "` + fullName + `", 
+      "Birthday": "` + newBirthday + `", 
+      "Email": "` + emailAddress + `", 
+      "Phone Number ": "` + phoneNumber + `", 
+      "Skills": "` + skills + `", 
+      "Working Experience": "` + workingExperience + `", 
+      "Education": "` + education + `"}`
+      console.log("ipfsContent", ipfsContent);
+      if (!ipfs) return
+      const fileAdded = await ipfs.add({ path: '', content: ipfsContent });
+
+      const ipfsPath = fileAdded.path;
+      console.log(ipfsPath);
+
       setLoading(true)
-      const tx = await program.rpc.updateProfile(fullName, new BN(birthday.valueOf() / 1000), emailAddress, "", "", {
+      const tx = await program.rpc.updateProfile(fullName, new BN(birthday.valueOf() / 1000), emailAddress, ipfsPath, "", {
         accounts: {
           authority: wallet.publicKey,
           profile: profilePDA,
@@ -98,7 +129,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
         },
         signers: [],
       })
-      console.log(tx);
+      console.log("update txn", tx);
 
       dispatch(
         setProfile({
@@ -106,25 +137,25 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
           birthday: birthday.valueOf() / 1000,
           email: emailAddress,
           is_email_verified: false,
-          ipfs_link: "",
+          ipfs_link: ipfsPath,
           ipfs_key: "",
         }),
       )
       setVisible(false)
-      return notification.success({ message: 'Created a profile' })
+      return notification.success({ message: 'Update profile successfully' })
     } catch (er: any) {
       return notification.error({ message: er.message })
     } finally {
       return setLoading(false)
     }
   }
-  console.log(currentBirthday);
+  // console.log(currentBirthday);
   let n = Number(currentBirthday) * 1000;
   let d = new Date(n);
   let iso = d.toISOString();
-  console.log(iso);
-  let m = moment(iso);
-  console.log(moment)
+  // console.log(iso);
+  let currentBirthdayMoment = moment(iso);
+  // console.log(moment)
   return (
     <Fragment>
       <Button icon={<UserAddOutlined />} onClick={() => setVisible(true)} block loading={loading}>
@@ -166,7 +197,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
               <Form.Item
                 name="date-picker"
                 label="Birthday"
-                initialValue={m}
+                initialValue={currentBirthdayMoment}
                 rules={[{ required: true, message: 'Please input your birthday!' }]}
                 labelAlign="left"
               >
@@ -207,7 +238,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
                 rules={[{ required: true, message: 'Please input your skills!' }]}
                 labelAlign="left"
               >
-                <Input.TextArea allowClear showCount rows={5} />
+                <Input.TextArea allowClear showCount rows={5} onChange={(e) => setSkills(e.target.value || '')} />
               </Form.Item>
             </Col>
             <Col span={24}>
@@ -218,7 +249,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
                 rules={[{ required: true, message: 'Please input your working experience!' }]}
                 labelAlign="left"
               >
-                <Input.TextArea allowClear showCount rows={5} />
+                <Input.TextArea allowClear showCount rows={5} onChange={(e) => setWorkingExperience(e.target.value || '')} />
               </Form.Item>
             </Col>
             <Col span={24}>
@@ -229,7 +260,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
                 rules={[{ required: true, message: 'Please input your education!' }]}
                 labelAlign="left"
               >
-                <Input.TextArea allowClear showCount rows={5} />
+                <Input.TextArea allowClear showCount rows={5} onChange={(e) => setEducation(e.target.value || '')} />
               </Form.Item>
             </Col>
             <Col span={24}>
