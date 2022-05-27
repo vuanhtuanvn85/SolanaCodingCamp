@@ -43,6 +43,9 @@ const CreateProfile = () => {
   const [skills, setSkills] = useState('')
   const [workingExperience, setWorkingExperience] = useState('')
   const [education, setEducation] = useState('')
+  const [checkerEmail_1, setCheckerEmail_1] = useState('')
+  const [checkerEmail_2, setCheckerEmail_2] = useState('')
+  const [checkerEmail_3, setCheckerEmail_3] = useState('')
   const dispatch = useDispatch()
   const wallet = useConnectedWallet()
 
@@ -97,6 +100,9 @@ const CreateProfile = () => {
         "Phone Number ": "` + CryptoJS.AES.encrypt(phoneNumber, passwordWillBeRandom).toString() + `", 
         "Skills": "` + CryptoJS.AES.encrypt(skills, passwordWillBeRandom).toString() + `", 
         "Working Experience": "` + CryptoJS.AES.encrypt(workingExperience, passwordWillBeRandom).toString() + `", 
+        "Checker email 1": "` + CryptoJS.AES.encrypt(checkerEmail_1, passwordWillBeRandom).toString() + `", 
+        "Checker email 2": "` + CryptoJS.AES.encrypt(checkerEmail_2, passwordWillBeRandom).toString() + `", 
+        "Checker email 3": "` + CryptoJS.AES.encrypt(checkerEmail_3, passwordWillBeRandom).toString() + `", 
         "Education": "` + CryptoJS.AES.encrypt(education, passwordWillBeRandom).toString() + `"}`
 
       console.log(ipfsContent);
@@ -272,6 +278,33 @@ const CreateProfile = () => {
                 labelAlign="left"
               >
                 <Input.TextArea allowClear showCount rows={5} onChange={(e) => setEducation(e.target.value || '')} />
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item
+                name="checkerEmail_1"
+                label="1st checker email"
+                labelAlign="left"
+              >
+                <Input allowClear onChange={(e) => setCheckerEmail_1(e.target.value || '')} />
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item
+                name="checkerEmail_2"
+                label="2nd checker email"
+                labelAlign="left"
+              >
+                <Input allowClear onChange={(e) => setCheckerEmail_2(e.target.value || '')} />
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item
+                name="checkerEmail_3"
+                label="3rd checker email"
+                labelAlign="left"
+              >
+                <Input allowClear onChange={(e) => setCheckerEmail_3(e.target.value || '')} />
               </Form.Item>
             </Col>
             <Col span={24}>

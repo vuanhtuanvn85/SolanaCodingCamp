@@ -31,6 +31,9 @@ function App() {
   const [skills, setSkills] = useState<string>("");
   const [workingExperience, setWorkingExperience] = useState<string>("");
   const [education, setEducation] = useState<string>("");
+  const [checkerEmail_1, setCheckerEmail_1] = useState('')
+  const [checkerEmail_2, setCheckerEmail_2] = useState('')
+  const [checkerEmail_3, setCheckerEmail_3] = useState('')
   const [profilePDA, setProfilePDA] = useState<string>("");
   const [birthday, setBirthday] = useState<number>(0);
 
@@ -68,11 +71,12 @@ function App() {
         ],
         program.programId
       );
-    console.log('===profilePDA', profilePDA.toBase58());
+    console.log('===profilePDA===', profilePDA.toBase58());
     setProfilePDA(profilePDA.toBase58());
     try {
+      console.log("*profileData*", profilePDA);
       let profileData = await program.account.profile.fetch(profilePDA);
-      console.log("profileData", profileData);
+      console.log("**profileData**", profileData);
       setFullName(profileData.fullName);
       setEmailAddress(profileData.email);
       setBirthday(Number(profileData.birthday));
@@ -82,10 +86,14 @@ function App() {
       console.log('ipfslink  index.tsx', profileData.ipfsLink);
       const response = await fetch('https://ipfs.io/ipfs/' + profileData.ipfsLink);
       const responseJSON = await response.json();
+      console.log(responseJSON);
       setPhoneNumber(CryptoJS.AES.decrypt(responseJSON['Phone Number '], passwordWillBeRandom).toString(CryptoJS.enc.Utf8));
       setSkills(CryptoJS.AES.decrypt(responseJSON['Skills'], passwordWillBeRandom).toString(CryptoJS.enc.Utf8));
       setWorkingExperience(CryptoJS.AES.decrypt(responseJSON['Working Experience'], passwordWillBeRandom).toString(CryptoJS.enc.Utf8));
       setEducation(CryptoJS.AES.decrypt(responseJSON['Education'], passwordWillBeRandom).toString(CryptoJS.enc.Utf8));
+      setCheckerEmail_1(CryptoJS.AES.decrypt(responseJSON['Checker email 1'], passwordWillBeRandom).toString(CryptoJS.enc.Utf8));
+      setCheckerEmail_2(CryptoJS.AES.decrypt(responseJSON['Checker email 2'], passwordWillBeRandom).toString(CryptoJS.enc.Utf8));
+      setCheckerEmail_3(CryptoJS.AES.decrypt(responseJSON['Checker email 3'], passwordWillBeRandom).toString(CryptoJS.enc.Utf8));
 
     } catch (error) {
       setHasProfile(false)
@@ -154,7 +162,7 @@ function App() {
           <Col span={24}>
             <Row gutter={[24, 24]}>
               <Col>
-                {hasProfile && (<EditProfile currentFullName={fullName} currentEmailAddress={emailAddress} currentBirthday={birthday} currentIpfsLink={ipfsLink} currentPhoneNumber={phoneNumber} currentSkills={skills} currentWorkingExperience={workingExperience} currentEducation={education} profilePDA={profilePDA} />)}
+                {hasProfile && (<EditProfile currentFullName={fullName} currentEmailAddress={emailAddress} currentBirthday={birthday} currentIpfsLink={ipfsLink} currentPhoneNumber={phoneNumber} currentSkills={skills} currentWorkingExperience={workingExperience} currentEducation={education} profilePDA={profilePDA} currentCheckerEmail_1={checkerEmail_1} currentCheckerEmail_2={checkerEmail_2} currentCheckerEmail_3={checkerEmail_3} />)}
                 {!hasProfile && (<CreateProfile />)}
               </Col>
             </Row>
@@ -211,7 +219,7 @@ function App() {
         <Col span={24}>
           <Row gutter={[24, 24]}>
             <Col>
-              {hasProfile && (<EditProfile currentFullName={fullName} currentEmailAddress={emailAddress} currentBirthday={birthday} currentIpfsLink={ipfsLink} currentPhoneNumber={phoneNumber} currentSkills={skills} currentWorkingExperience={workingExperience} currentEducation={education} profilePDA={profilePDA} />)}
+              {hasProfile && (<EditProfile currentFullName={fullName} currentEmailAddress={emailAddress} currentBirthday={birthday} currentIpfsLink={ipfsLink} currentPhoneNumber={phoneNumber} currentSkills={skills} currentWorkingExperience={workingExperience} currentEducation={education} profilePDA={profilePDA} currentCheckerEmail_1={checkerEmail_1} currentCheckerEmail_2={checkerEmail_2} currentCheckerEmail_3={checkerEmail_3} />)}
               {!hasProfile && (<CreateProfile />)}
             </Col>
           </Row>

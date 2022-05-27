@@ -5,12 +5,15 @@ pub struct Profile {
     pub full_name: String,
     pub birthday: i64,
     pub email: String,
-    pub is_email_verified: bool,
     pub ipfs_link: String,
     pub ipfs_key: String,
+    pub ref_checkers: Vec<Pubkey>,
+    pub sum_positive: u64,
+    pub sum_negative: u64,
+    pub start_time: i64,
     pub bump: u8,
 }
 
 impl Profile {
-    pub const SIZE: usize = 8 + 4 + 100 + 8 + 4 + 100 + 1 + 4 + 100 + 4 + 100;
+    pub const SIZE: usize = 8 + 4 + 100 + 8 + 4 + 100 + 1 + 4 + 100 + 4 + 100 + 4 + 32 + 8 + 8+ 1;
 }

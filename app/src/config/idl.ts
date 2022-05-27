@@ -166,16 +166,30 @@ export type SolanaCodingCamp = {
             "type": "string"
           },
           {
-            "name": "isEmailVerified",
-            "type": "bool"
-          },
-          {
             "name": "ipfsLink",
             "type": "string"
           },
           {
             "name": "ipfsKey",
             "type": "string"
+          },
+          {
+            "name": "refCheckers",
+            "type": {
+              "vec": "publicKey"
+            }
+          },
+          {
+            "name": "sumPositive",
+            "type": "u64"
+          },
+          {
+            "name": "sumNegative",
+            "type": "u64"
+          },
+          {
+            "name": "startTime",
+            "type": "i64"
           },
           {
             "name": "bump",
@@ -387,16 +401,30 @@ export const IDL: SolanaCodingCamp = {
             "type": "string"
           },
           {
-            "name": "isEmailVerified",
-            "type": "bool"
-          },
-          {
             "name": "ipfsLink",
             "type": "string"
           },
           {
             "name": "ipfsKey",
             "type": "string"
+          },
+          {
+            "name": "refCheckers",
+            "type": {
+              "vec": "publicKey"
+            }
+          },
+          {
+            "name": "sumPositive",
+            "type": "u64"
+          },
+          {
+            "name": "sumNegative",
+            "type": "u64"
+          },
+          {
+            "name": "startTime",
+            "type": "i64"
           },
           {
             "name": "bump",

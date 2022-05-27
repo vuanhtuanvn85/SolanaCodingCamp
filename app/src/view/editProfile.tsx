@@ -40,11 +40,15 @@ interface EditProfileProps {
   currentSkills: String,
   currentWorkingExperience: String,
   currentEducation: String,
+  currentCheckerEmail_1: String,
+  currentCheckerEmail_2: String,
+  currentCheckerEmail_3: String,
   profilePDA: String
 }
 
-const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmailAddress, currentBirthday, currentIpfsLink, currentPhoneNumber, currentSkills, currentWorkingExperience, currentEducation, profilePDA }) => {
+const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmailAddress, currentBirthday, currentIpfsLink, currentPhoneNumber, currentSkills, currentWorkingExperience, currentEducation, profilePDA, currentCheckerEmail_1, currentCheckerEmail_2, currentCheckerEmail_3 }) => {
   console.log("====profilePDA", profilePDA);
+  console.log("====currentCheckerEmail_1========", currentCheckerEmail_1);
   const [visible, setVisible] = useState(false)
   const [loading, setLoading] = useState(false)
   const [fullName, setFullName] = useState(currentFullName)
@@ -54,7 +58,9 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
   const [skills, setSkills] = useState('')
   const [workingExperience, setWorkingExperience] = useState('')
   const [education, setEducation] = useState('')
-
+  const [checkerEmail_1, setCheckerEmail_1] = useState('')
+  const [checkerEmail_2, setCheckerEmail_2] = useState('')
+  const [checkerEmail_3, setCheckerEmail_3] = useState('')
   const dispatch = useDispatch()
   const wallet = useConnectedWallet()
 
@@ -105,13 +111,19 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
 
 
       setLoading(true)
+
       const ipfsContent = `{"Full Name": "` + fullName + `", 
-      "Birthday": "` + newBirthday + `", 
-      "Email": "` + emailAddress + `", 
-      "Phone Number ": "` + CryptoJS.AES.encrypt(phoneNumber, passwordWillBeRandom).toString() + `", 
-      "Skills": "` + CryptoJS.AES.encrypt(skills, passwordWillBeRandom).toString() + `", 
-      "Working Experience": "` + CryptoJS.AES.encrypt(workingExperience, passwordWillBeRandom).toString() + `", 
-      "Education": "` + CryptoJS.AES.encrypt(education, passwordWillBeRandom).toString() + `"}`
+        "Birthday": "` + birthday + `", 
+        "Email": "` + emailAddress + `", 
+        "Phone Number ": "` + CryptoJS.AES.encrypt(phoneNumber, passwordWillBeRandom).toString() + `", 
+        "Skills": "` + CryptoJS.AES.encrypt(skills, passwordWillBeRandom).toString() + `", 
+        "Working Experience": "` + CryptoJS.AES.encrypt(workingExperience, passwordWillBeRandom).toString() + `", 
+        "Checker email 1": "` + CryptoJS.AES.encrypt(checkerEmail_1, passwordWillBeRandom).toString() + `", 
+        "Checker email 2": "` + CryptoJS.AES.encrypt(checkerEmail_2, passwordWillBeRandom).toString() + `", 
+        "Checker email 3": "` + CryptoJS.AES.encrypt(checkerEmail_3, passwordWillBeRandom).toString() + `", 
+        "Education": "` + CryptoJS.AES.encrypt(education, passwordWillBeRandom).toString() + `"}`
+
+
       if (!ipfs) return
       const fileAdded = await ipfs.add({ path: '', content: ipfsContent });
 
@@ -318,6 +330,36 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
                 initialValue={currentEducation}
               >
                 <Input.TextArea allowClear showCount rows={5} onChange={(e) => setEducation(e.target.value || '')} />
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item
+                name="checkerEmail_1"
+                label="1st checker email"
+                labelAlign="left"
+                initialValue={currentCheckerEmail_1}
+              >
+                <Input allowClear onChange={(e) => setCheckerEmail_1(e.target.value || '')} />
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item
+                name="checkerEmail_2"
+                label="2nd checker email"
+                labelAlign="left"
+                initialValue={currentCheckerEmail_2}
+              >
+                <Input allowClear onChange={(e) => setCheckerEmail_2(e.target.value || '')} />
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item
+                name="checkerEmail_3"
+                label="3rd checker email"
+                labelAlign="left"
+                initialValue={currentCheckerEmail_3}
+              >
+                <Input allowClear onChange={(e) => setCheckerEmail_3(e.target.value || '')} />
               </Form.Item>
             </Col>
             <Col span={24}>

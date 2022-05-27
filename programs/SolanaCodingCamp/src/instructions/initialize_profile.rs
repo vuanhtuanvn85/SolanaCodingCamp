@@ -55,7 +55,6 @@ pub fn exec(ctx: Context<InitializeProfile>, full_name: String, birthday: i64, e
     profile.full_name = full_name;
     profile.birthday = birthday;
     profile.email = email;
-    profile.is_email_verified = false;
     profile.ipfs_link = ipfs_link;
     profile.ipfs_key = ipfs_key;
     profile.bump = *ctx.bumps.get("profile").unwrap();
