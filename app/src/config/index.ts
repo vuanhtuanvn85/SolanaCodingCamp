@@ -14,9 +14,9 @@ export type ProfileData = {
   full_name: String,
   birthday: number,
   email: String,
-  is_email_verified: boolean,
   ipfs_link: String,
   ipfs_key: String,
+
 }
 
 // Function support

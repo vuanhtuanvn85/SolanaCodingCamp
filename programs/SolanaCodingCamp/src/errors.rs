@@ -14,4 +14,6 @@ pub enum ErrorCode {
     IPFSLinkLongThan100,
     #[msg("IPFS key is long thang 100 characters")]
     IPFSKeyLongThan100,
+    #[msg("List ref_checkers is full (10 elements)")]
+    ListFull,
 }

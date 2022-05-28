@@ -145,4 +145,83 @@ describe('SolanaCodingCamp', () => {
     console.log("profileData", profileData);
   })
 
+  it('vote', async () => {
+    const now = Math.floor(new Date().getTime() / 1000)
+    const startTime = new BN(now)
+
+    const [profilePDA, _] = await web3.PublicKey
+      .findProgramAddress(
+        [
+          utils.bytes.utf8.encode("profile"),
+          provider.wallet.publicKey.toBuffer()
+        ],
+        program.programId
+      );
+
+    await program.rpc.vote(new BN(100), false, {
+      accounts: {
+        authority: provider.wallet.publicKey,
+        profile: profilePDA,
+        treasurer,
+        mint: mint.publicKey,
+        profileTokenAccount,
+        ballot,
+        voterTokenAccount: walletTokenAccount,
+        tokenProgram: utils.token.TOKEN_PROGRAM_ID,
+        associatedTokenProgram: utils.token.ASSOCIATED_PROGRAM_ID,
+        systemProgram: web3.SystemProgram.programId,
+        rent: web3.SYSVAR_RENT_PUBKEY,
+      },
+      signers: [],
+    })
+
+
+    console.log("ballot", ballot);
+    console.log("authoriy pubkey", provider.wallet.publicKey.toBase58());
+
+    console.log("*profilePDA*", profilePDA);
+    let profileData = await program.account.profile.fetch(profilePDA);
+    console.log("profileData", profileData);
+
+
+
+    let ballot_1 = profileData.ballots[0].toBase58();
+    console.log("Ballot 1", ballot_1);
+    let balot_1_Data = await program.account.ballot.fetch(profileData.ballots[0].toBase58());
+    console.log("ballot 1 Data", balot_1_Data);
+
+  })
+
+
+  // it('Anyone can vote', async () => {
+  //   const now = Math.floor(new Date().getTime() / 1000)
+  //   const startTime = new BN(now)
+
+  //   const [profilePDA, _] = await web3.PublicKey
+  //     .findProgramAddress(
+  //       [
+  //         utils.bytes.utf8.encode("profile"),
+  //         provider.wallet.publicKey.toBuffer()
+  //       ],
+  //       program.programId
+  //     );
+
+  //   let ballotAccount = new web3.Keypair();
+  //   console.log('=====ballotAccount======', ballotAccount);
+  //   console.log(profilePDA, provider.wallet.publicKey, ballotAccount.publicKey);
+  //   await program.rpc.vote(new BN(500), {
+  //     accounts: {
+  //       profile: profilePDA,
+  //       profileOwner: provider.wallet.publicKey,
+  //       ballot: ballotAccount.publicKey,
+  //       user: provider.wallet.publicKey,
+  //       systemProgram: web3.SystemProgram.programId,
+  //     },
+  //     signers: [ballotAccount.publicKey],
+  //   })
+
+  //   let profileData = await program.account.profile.fetch(profilePDA);
+  //   console.log("profileData", profileData);
+  // })
+
 })

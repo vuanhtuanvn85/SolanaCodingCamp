@@ -28,3 +28,17 @@
     color: #fff !important;
 }
 
+.rehire {
+    color: red !important;
+    font-weight: bold !important;
+}
+
+.btnyes {
+    background-color: green !important;
+    color: #fff !important;
+}
+
+.btnno {
+    background-color: red !important;
+    color: #fff !important;
+}

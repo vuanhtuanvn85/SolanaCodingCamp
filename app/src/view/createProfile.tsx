@@ -132,7 +132,6 @@ const CreateProfile = () => {
           full_name: fullName,
           birthday: birthday.valueOf() / 1000,
           email: emailAddress,
-          is_email_verified: false,
           ipfs_link: ipfsPath,
           ipfs_key: passwordWillBeRandom,
         }),

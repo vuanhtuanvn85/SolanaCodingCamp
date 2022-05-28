@@ -52,6 +52,7 @@ pub fn exec(ctx: Context<InitializeProfile>, full_name: String, birthday: i64, e
     if ipfs_key.as_bytes().len() > 100 {
       return err!(ErrorCode::IPFSKeyLongThan100);
     }
+    profile.profile_owner = *ctx.accounts.authority.to_account_info().key;
     profile.full_name = full_name;
     profile.birthday = birthday;
     profile.email = email;

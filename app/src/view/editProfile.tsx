@@ -47,8 +47,6 @@ interface EditProfileProps {
 }
 
 const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmailAddress, currentBirthday, currentIpfsLink, currentPhoneNumber, currentSkills, currentWorkingExperience, currentEducation, profilePDA, currentCheckerEmail_1, currentCheckerEmail_2, currentCheckerEmail_3 }) => {
-  console.log("====profilePDA", profilePDA);
-  console.log("====currentCheckerEmail_1========", currentCheckerEmail_1);
   const [visible, setVisible] = useState(false)
   const [loading, setLoading] = useState(false)
   const [fullName, setFullName] = useState(currentFullName)
@@ -150,7 +148,6 @@ const EditProfile: React.FC<EditProfileProps> = ({ currentFullName, currentEmail
           full_name: fullName,
           birthday: birthday.valueOf() / 1000,
           email: emailAddress,
-          is_email_verified: false,
           ipfs_link: ipfsPath,
           ipfs_key: passwordWillBeRandom,
         }),

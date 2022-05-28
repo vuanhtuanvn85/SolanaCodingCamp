@@ -34,4 +34,10 @@ pub mod solana_coding_camp {
     ) -> Result<()> {
         update_profile::exec(ctx, full_name, birthday, email, ipfs_link, ipfs_key)
     }    
+    pub fn vote(ctx: Context<Vote>,
+        amount: u64,
+        is_positive: bool
+    ) -> Result<()> {
+        vote::exec(ctx, amount, is_positive)
+    }    
 }

@@ -10,9 +10,12 @@ import { setWalletInfo, WalletState } from 'store/wallet.reducer'
 import { AppDispatch } from 'store'
 import CreateProfile from 'view/createProfile';
 import EditProfile from 'view/editProfile';
+import VoteProfile from 'view/voteProfile';
+import Home from 'view/home';
 import ListJobs from 'view/listJobs';
 import { getProgram } from '../../config'
 import "../../styles/index.css";
+import { Route, Switch } from 'react-router-dom';
 var CryptoJS = require("crypto-js");
 
 const mintAddress = '5ftoDyQvRRL9wFXmaHVN4vYqfdjWue8woQSQ1T8RpinA';
@@ -74,9 +77,9 @@ function App() {
     console.log('===profilePDA===', profilePDA.toBase58());
     setProfilePDA(profilePDA.toBase58());
     try {
-      console.log("*profileData*", profilePDA);
       let profileData = await program.account.profile.fetch(profilePDA);
       console.log("**profileData**", profileData);
+
       setFullName(profileData.fullName);
       setEmailAddress(profileData.email);
       setBirthday(Number(profileData.birthday));
@@ -105,7 +108,7 @@ function App() {
   }, [fetchWalletInfo])
 
   return (
-    <Layout>
+    <Layout style={{ minHeight: '100vh' }}>
       <Layout.Header>
         <Row justify="end">
           <Col span={4}>
@@ -157,75 +160,12 @@ function App() {
           </Col>
         </Row>
       </Layout.Header>
+
       <Layout.Content style={{ padding: 40 }}>
-        <Row gutter={[24, 24]}>
-          <Col span={24}>
-            <Row gutter={[24, 24]}>
-              <Col>
-                {hasProfile && (<EditProfile currentFullName={fullName} currentEmailAddress={emailAddress} currentBirthday={birthday} currentIpfsLink={ipfsLink} currentPhoneNumber={phoneNumber} currentSkills={skills} currentWorkingExperience={workingExperience} currentEducation={education} profilePDA={profilePDA} currentCheckerEmail_1={checkerEmail_1} currentCheckerEmail_2={checkerEmail_2} currentCheckerEmail_3={checkerEmail_3} />)}
-                {!hasProfile && (<CreateProfile />)}
-              </Col>
-            </Row>
-          </Col>
-          <Col span={24}>
-            <Row gutter={[24, 24]}>
-              <Col flex="auto">
-                <Typography.Title level={3}>Explore developer jobs</Typography.Title>
-              </Col>
-            </Row>
-          </Col>
-          <Col span={24}>
-            <ListJobs />
-          </Col>
-          <Col span={24}>
-            <Typography.Title level={4}></Typography.Title>
-          </Col>
-          <Col span={24}>
-            <Typography.Title level={4}>Based on your skills</Typography.Title>
-          </Col>
-          <Col span={24}>
-            <Image preview={false} style={{ width: "85vw", marginLeft: "75px" }} src="../../images/base_on_skill.png" />
-          </Col>
-          <Col span={24}>
-            <Typography.Title level={4}></Typography.Title>
-          </Col>
-          <Col span={24}>
-            <Typography.Title level={4}></Typography.Title>
-          </Col>
-          <Col span={24}>
-            <Typography.Title level={4}>Based on your role</Typography.Title>
-          </Col>
-          <Col span={24}>
-            <Image preview={false} style={{ width: "85vw", marginLeft: "75px" }} src="../../images/base_on_role.png" />
-          </Col>
-        </Row>
-
-        <Col span={24}>
-          <Typography.Title level={4}></Typography.Title>
-        </Col>
-        <Col span={24}>
-          <Typography.Title level={4}></Typography.Title>
-        </Col>
-        <Col span={24}>
-          <Typography.Title level={4}></Typography.Title>
-        </Col>
-        <Col span={24}>
-          <Typography.Title level={4}></Typography.Title>
-        </Col>
-        <Col span={24}>
-          <Typography.Title level={4}></Typography.Title>
-        </Col>
-
-        <Col span={24}>
-          <Row gutter={[24, 24]}>
-            <Col>
-              {hasProfile && (<EditProfile currentFullName={fullName} currentEmailAddress={emailAddress} currentBirthday={birthday} currentIpfsLink={ipfsLink} currentPhoneNumber={phoneNumber} currentSkills={skills} currentWorkingExperience={workingExperience} currentEducation={education} profilePDA={profilePDA} currentCheckerEmail_1={checkerEmail_1} currentCheckerEmail_2={checkerEmail_2} currentCheckerEmail_3={checkerEmail_3} />)}
-              {!hasProfile && (<CreateProfile />)}
-            </Col>
-          </Row>
-        </Col>
-
-
+        <Switch>
+          <Route path="/vote" component={VoteProfile} />
+          <Route path="/" component={Home} />
+        </Switch>
       </Layout.Content>
       <Layout.Footer style={{ textAlign: 'center' }}>
         <Typography.Text style={{ color: '#fff' }}>

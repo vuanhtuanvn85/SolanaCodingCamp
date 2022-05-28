@@ -145,14 +145,108 @@ export type SolanaCodingCamp = {
           "type": "string"
         }
       ]
+    },
+    {
+      "name": "vote",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "profile",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasurer",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "mint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "profileTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ballot",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "voterTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "isPositive",
+          "type": "bool"
+        }
+      ]
     }
   ],
   "accounts": [
+    {
+      "name": "ballot",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "voter",
+            "type": "publicKey"
+          },
+          {
+            "name": "profile",
+            "type": "publicKey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ]
+      }
+    },
     {
       "name": "profile",
       "type": {
         "kind": "struct",
         "fields": [
+          {
+            "name": "profileOwner",
+            "type": "publicKey"
+          },
           {
             "name": "fullName",
             "type": "string"
@@ -174,7 +268,7 @@ export type SolanaCodingCamp = {
             "type": "string"
           },
           {
-            "name": "refCheckers",
+            "name": "ballots",
             "type": {
               "vec": "publicKey"
             }
@@ -229,6 +323,11 @@ export type SolanaCodingCamp = {
       "code": 6005,
       "name": "IPFSKeyLongThan100",
       "msg": "IPFS key is long thang 100 characters"
+    },
+    {
+      "code": 6006,
+      "name": "ListFull",
+      "msg": "List ref_checkers is full (10 elements)"
     }
   ]
 };
@@ -380,14 +479,108 @@ export const IDL: SolanaCodingCamp = {
           "type": "string"
         }
       ]
+    },
+    {
+      "name": "vote",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "profile",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasurer",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "mint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "profileTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ballot",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "voterTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "isPositive",
+          "type": "bool"
+        }
+      ]
     }
   ],
   "accounts": [
+    {
+      "name": "ballot",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "voter",
+            "type": "publicKey"
+          },
+          {
+            "name": "profile",
+            "type": "publicKey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ]
+      }
+    },
     {
       "name": "profile",
       "type": {
         "kind": "struct",
         "fields": [
+          {
+            "name": "profileOwner",
+            "type": "publicKey"
+          },
           {
             "name": "fullName",
             "type": "string"
@@ -409,7 +602,7 @@ export const IDL: SolanaCodingCamp = {
             "type": "string"
           },
           {
-            "name": "refCheckers",
+            "name": "ballots",
             "type": {
               "vec": "publicKey"
             }
@@ -464,6 +657,11 @@ export const IDL: SolanaCodingCamp = {
       "code": 6005,
       "name": "IPFSKeyLongThan100",
       "msg": "IPFS key is long thang 100 characters"
+    },
+    {
+      "code": 6006,
+      "name": "ListFull",
+      "msg": "List ref_checkers is full (10 elements)"
     }
   ]
 };
