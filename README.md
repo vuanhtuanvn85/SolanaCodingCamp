@@ -1,3 +1,10 @@
+
+
+### GamCheckWorks is a platform for talents and clients with low fees (0% talent fee), short processing time (2 hours. for reference checking), and all information is immutable and transparent.  
+  
+![demo](./images/demo.gif)  
+
+=====  
 1. Init project with anchor  
     `anchor SolanaCodingCamp`  
     `cd SolanaCodingCamp`  
@@ -57,5 +64,8 @@
 
     Update token name and token logo:  https://github.com/solana-labs/token-list
 
+Run front-end:  
+`cd app`  
+`npm start`  
 
 
